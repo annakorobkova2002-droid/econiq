@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    .header {
+      padding: 60px 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .greeting {
+      font-size: 12px;
+      color: #999893;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .app-name {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #1a1a1a;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.15em;
+    }
+
+    .logo-black { color: #1a1a1a; }
+    .logo-green { color: #4a7a52; }
+
+    .xp-badge {
+      background: #e8e6e0;
+      border: 1px solid #d8d5ce;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #6b7a6f;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .xp-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #7a8b7f;
+    }
+
+    .streak-bar {
+      margin: 0 24px 28px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .streak-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #e0ddd7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .streak-text { flex: 1; }
+
+    .streak-label {
+      font-size: 11px;
+      color: #aaa89f;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .streak-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c4925a;
+      margin-top: 2px;
+    }
+
+    .streak-dots { display: flex; gap: 5px; }
+    .sdot { width: 7px; height: 7px; border-radius: 50%; background: #d8d5ce; }
+    .sdot.on { background: #c4925a; }
+
+    .section-label {
+      padding: 0 24px 12px;
+      font-size: 11px;
+      color: #aaa89f;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    .subjects {
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .card:active { transform: scale(0.97); opacity: 0.85; }
+
+    .card-sage  { background: #e4ebe5; border-color: #cdd8ce; }
+    .card-slate { background: #e2e6eb; border-color: #ccd2d9; }
+    .card-clay  { background: #ece6df; border-color: #ddd5cb; }
+    .card-dust  { background: #eae7e2; border-color: #d8d3cc; }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-sage  .card-icon { background: #cdd8ce; }
+    .card-slate .card-icon { background: #ccd2d9; }
+    .card-clay  .card-icon { background: #ddd5cb; }
+    .card-dust  .card-icon { background: #d8d3cc; }
+
+    .card-icon svg { display: block; }
+
+    .card-info { flex: 1; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #2a2a2a;
+      letter-spacing: -0.01em;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 3px;
+    }
+
+    .prog-wrap { display: flex; align-items: center; gap: 8px; }
+
+    .prog-bar {
+      width: 44px;
+      height: 3px;
+      background: #ffffff99;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .prog-fill { height: 100%; border-radius: 2px; }
+
+    .card-sage  .prog-fill { background: #6a9470; }
+    .card-slate .prog-fill { background: #6a84a0; }
+    .card-clay  .prog-fill { background: #a07858; }
+    .card-dust  .prog-fill { background: #8a8070; }
+
+    .prog-pct {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa89f;
+      min-width: 28px;
+      text-align: right;
+    }
+
+    .badge-soon {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 7px;
+      background: #e0ddd7;
+      color: #aaa89f;
+      font-weight: 600;
+    }
+
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f2f1ed;
+      border-top: 1px solid #e0ddd7;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 28px;
+    }
+
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      opacity: 0.3;
+      cursor: pointer;
+    }
+
+    .tab.active { opacity: 1; }
+
+    .tab-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tab.active .tab-label { color: #7a8b7f; }
+    .tab.active svg { stroke: #7a8b7f; }
+
+    .page-end { height: 100px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <div class="greeting">Good morning</div>
+      <div class="app-name"><span class="logo-black">Econ</span><span class="logo-green">IQ</span></div>
+    </div>
+    <div class="xp-badge">
+      <div class="xp-dot"></div>
+      240 XP
+    </div>
+  </div>
+
+  <div class="streak-bar">
+    <div class="streak-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c4925a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    </div>
+    <div class="streak-text">
+      <div class="streak-label">Study streak</div>
+      <div class="streak-val">5 days in a row</div>
+    </div>
+    <div class="streak-dots">
+      <div class="sdot on"></div>
+      <div class="sdot on"></div>
+      <div class="sdot on"></div>
+      <div class="sdot on"></div>
+      <div class="sdot on"></div>
+      <div class="sdot"></div>
+      <div class="sdot"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Your subjects</div>
+
+  <div class="subjects">
+
+    <!-- Game Theory -->
+    <div class="card card-sage" onclick="window.location.href='game-theory-home.html'">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a7a52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="8" height="8" rx="1"/>
+          <rect x="14" y="2" width="8" height="8" rx="1"/>
+          <rect x="2" y="14" width="8" height="8" rx="1"/>
+          <path d="M18 14v8M14 18h8"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Game Theory</div>
+        <div class="card-sub">Nash equilibrium, mixed strategies</div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-bar"><div class="prog-fill" style="width:48%"></div></div>
+        <div class="prog-pct">48%</div>
+      </div>
+    </div>
+
+    <!-- Finance -->
+    <div class="card card-slate" onclick="alert('Finance module coming soon!')">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Finance & Accounting</div>
+        <div class="card-sub">NPV, IRR, CAPM, financial statements</div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-bar"><div class="prog-fill" style="width:15%"></div></div>
+        <div class="prog-pct">15%</div>
+      </div>
+    </div>
+
+    <!-- Macroeconomics -->
+    <div class="card card-clay" style="opacity:0.5;cursor:default;">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a6848" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Macroeconomics</div>
+        <div class="card-sub">Coming soon</div>
+      </div>
+      <div class="badge-soon">Soon</div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="card card-dust" style="opacity:0.5;cursor:default;">
+      <div class="card-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a7068" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+          <line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Statistics</div>
+        <div class="card-sub">Coming soon</div>
+      </div>
+      <div class="badge-soon">Soon</div>
+    </div>
+
+  </div>
+
+  <div class="page-end"></div>
+
+  <div class="tab-bar">
+
+    <div class="tab active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a8b7f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <div class="tab-label">Learn</div>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+      <div class="tab-label">Practice</div>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <div class="tab-label">Progress</div>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <div class="tab-label">Settings</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

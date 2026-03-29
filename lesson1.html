@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction & Strategic Thinking — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 1px;
+    }
+
+    /* ── Section tabs ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 0 24px 24px;
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #d8d5ce;
+      background: #eae8e2;
+      color: #999893;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #4a7a52;
+      border-color: #4a7a52;
+      color: #ffffff;
+    }
+
+    /* ── Content sections ── */
+    .section { display: none; padding: 0 24px; }
+    .section.active { display: block; }
+
+    /* ── Theory ── */
+    .theory-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+    }
+
+    .theory-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p:last-child { margin-bottom: 0; }
+
+    .highlight-box {
+      background: #e4ebe5;
+      border-left: 3px solid #4a7a52;
+      border-radius: 0 10px 10px 0;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #2a4a2e;
+      line-height: 1.6;
+    }
+
+    /* ── Example ── */
+    .matrix-wrap {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+    }
+
+    .matrix-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .matrix-desc {
+      font-size: 12px;
+      color: #999893;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .matrix th {
+      padding: 8px 10px;
+      text-align: center;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .matrix td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e8e6e0;
+      font-size: 14px;
+      color: #2a2a2a;
+      font-weight: 500;
+      border-radius: 4px;
+    }
+
+    .matrix td.row-header {
+      text-align: left;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+      border: none;
+      padding-left: 0;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+
+    .step-card p {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── Practice ── */
+    .practice-intro {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .question-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+
+    .question-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .question-card input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8d5ce;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .quiz-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .check-btn {
+      width: 100%;
+      padding: 14px;
+      background: #4a7a52;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: opacity 0.2s;
+    }
+
+    .check-btn:active { opacity: 0.85; }
+
+    .feedback-box {
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback-box.correct {
+      background: #e4ebe5;
+      border: 1px solid #4a7a52;
+      color: #2a4a2e;
+      display: block;
+    }
+
+    .feedback-box.incorrect {
+      background: #f5ede8;
+      border: 1px solid #c07858;
+      color: #5a2a1a;
+      display: block;
+    }
+
+    .hint-box {
+      background: #f8f7f4;
+      border: 1px solid #e0ddd7;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <a href="game-theory-home.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div>
+      <div class="page-title">Introduction & Strategic Thinking</div>
+      <div class="page-sub">Game Theory</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab-btn active" onclick="switchTab('theory')">Theory</div>
+    <div class="tab-btn" onclick="switchTab('example')">Example</div>
+    <div class="tab-btn" onclick="switchTab('practice')">Practice</div>
+  </div>
+
+  <!-- ══════════════ THEORY ══════════════ -->
+  <div class="section active" id="theory">
+
+    <div class="theory-card">
+      <h2>What is a Game?</h2>
+      <p>A game is a situation where the outcome depends on choices made by more than one person or firm. It's not just about you—others' decisions matter too.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Key Terms</h2>
+      <p><strong>Player</strong> – a person or firm making a choice.<br><strong>Strategy</strong> – one possible action.<br><strong>Payoff</strong> – the result or reward from a choice.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Strategic Thinking</h2>
+      <p>Players must think about what others might do. Your choice should respond to their likely actions.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Two Types of Games</h2>
+      <p><strong>Simultaneous game</strong> – players choose at the same time.<br><strong>Sequential game</strong> – one player chooses first.</p>
+    </div>
+
+    <div class="highlight-box">
+      Your best choice depends on the other player.
+    </div>
+
+  </div>
+
+  <!-- ══════════════ EXAMPLE ══════════════ -->
+  <div class="section" id="example">
+
+    <div class="matrix-wrap">
+      <div class="matrix-title">Two Coffee Shops</div>
+      <div class="matrix-desc">Two coffee shops on the same street each choose High Price or Low Price. The numbers show daily profits.</div>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Shop 2: High Price</th>
+            <th>Shop 2: Low Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-header">Shop 1: High Price</td>
+            <td>4, 4</td>
+            <td>1, 5</td>
+          </tr>
+          <tr>
+            <td class="row-header">Shop 1: Low Price</td>
+            <td>5, 1</td>
+            <td>2, 2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="step-card">
+      <p>If both choose High Price, both do well.</p>
+    </div>
+
+    <div class="step-card">
+      <p>If one chooses Low Price, that shop gets more customers.</p>
+    </div>
+
+    <div class="step-card">
+      <p>The choice of one shop changes the result for the other.</p>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ PRACTICE ══════════════ -->
+  <div class="section" id="practice">
+
+    <div class="practice-intro">
+      <strong>Multiple Choice Quiz</strong><br>
+      Test your understanding with these quick questions.
+    </div>
+
+    <div class="question-card">
+      <h3>1. What is a payoff?</h3>
+      <label class="quiz-option">
+        <input type="radio" name="q1" value="A person making a choice">
+        <span>A person making a choice</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q1" value="One possible action">
+        <span>One possible action</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q1" value="The result or reward from a choice">
+        <span>The result or reward from a choice</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q1" value="A type of game">
+        <span>A type of game</span>
+      </label>
+      <div class="feedback-box" id="fb1"></div>
+    </div>
+
+    <div class="question-card">
+      <h3>2. In the coffee shop example, who are the players?</h3>
+      <label class="quiz-option">
+        <input type="radio" name="q2" value="The customers">
+        <span>The customers</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q2" value="The street">
+        <span>The street</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q2" value="The two coffee shops">
+        <span>The two coffee shops</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q2" value="The prices">
+        <span>The prices</span>
+      </label>
+      <div class="feedback-box" id="fb2"></div>
+    </div>
+
+    <div class="question-card">
+      <h3>3. What is a strategy?</h3>
+      <label class="quiz-option">
+        <input type="radio" name="q3" value="The result of a choice">
+        <span>The result of a choice</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q3" value="A person in the game">
+        <span>A person in the game</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q3" value="One possible action">
+        <span>One possible action</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="q3" value="A type of game">
+        <span>A type of game</span>
+      </label>
+      <div class="feedback-box" id="fb3"></div>
+    </div>
+
+    <button class="check-btn" onclick="checkQuiz()">Check Answers</button>
+
+  </div>
+
+  <script>
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['theory','example','practice'][i] === name);
+      });
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function checkQuiz() {
+      const answers = [
+        { name: 'q1', correct: 'The result or reward from a choice', fb: 'fb1', exp: 'A payoff is what a player gets based on the choices made.' },
+        { name: 'q2', correct: 'The two coffee shops', fb: 'fb2', exp: 'Players are the decision-makers, here the two shops choosing prices.' },
+        { name: 'q3', correct: 'One possible action', fb: 'fb3', exp: 'A strategy is a choice available to a player, like High Price or Low Price.' }
+      ];
+
+      answers.forEach(a => {
+        const selected = document.querySelector(`input[name="${a.name}"]:checked`);
+        const fb = document.getElementById(a.fb);
+        fb.className = 'feedback-box';
+        if (selected && selected.value === a.correct) {
+          fb.classList.add('correct');
+          fb.innerHTML = '<strong>Correct!</strong> ' + a.exp;
+        } else {
+          fb.classList.add('incorrect');
+          fb.innerHTML = '<strong>Not quite.</strong> ' + a.exp;
+        }
+      });
+    }
+
+  </script>
+
+</body>
+</html>

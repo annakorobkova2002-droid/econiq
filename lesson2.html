@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dominant Strategies & IEDS — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 1px;
+    }
+
+    /* ── Section tabs ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 0 24px 24px;
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #d8d5ce;
+      background: #eae8e2;
+      color: #999893;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #4a7a52;
+      border-color: #4a7a52;
+      color: #ffffff;
+    }
+
+    /* ── Content sections ── */
+    .section { display: none; padding: 0 24px; }
+    .section.active { display: block; }
+
+    /* ── Theory ── */
+    .theory-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+    }
+
+    .theory-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p:last-child { margin-bottom: 0; }
+
+    .small-matrix {
+      margin: 12px 0;
+      font-size: 12px;
+    }
+
+    .small-matrix .matrix-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a7a52;
+      position: relative;
+      left: 62%;
+      transform: translateX(-50%);
+    }
+
+    .small-matrix .matrix-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .small-matrix .p1-key {
+      font-size: 12px;
+      color: #4a7a52;
+      font-weight: 700;
+      padding: 4px 0;
+      align-self: center;
+    }
+
+    .small-matrix table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .small-matrix th, .small-matrix td {
+      padding: 6px 8px;
+      text-align: center;
+      border: 1px solid #e8e6e0;
+    }
+
+    .small-matrix th {
+      color: #999893;
+      font-weight: 600;
+    }
+
+    .small-matrix td {
+      color: #2a2a2a;
+      font-weight: 500;
+    }
+
+    .br-p1 {
+      border-bottom: 2px solid #4a7a52;
+      font-weight: 700;
+      display: inline-block;
+      padding-bottom: 1px;
+    }
+
+    .br-p2 {
+      border-bottom: 2px solid #6a84a0;
+      font-weight: 700;
+      display: inline-block;
+      padding-bottom: 1px;
+    }
+
+    .selected-p1 {
+      text-decoration: underline solid #4a7a52;
+      text-decoration-thickness: 2px;
+      color: #1a5a2a;
+      font-weight: 700;
+      background: transparent;
+    }
+
+    .selected-p2 {
+      text-decoration: underline solid #6a84a0;
+      text-decoration-thickness: 2px;
+      color: #2d4a68;
+      font-weight: 700;
+      background: transparent;
+    }
+
+    .wrong-selection {
+      color: #a83f3f;
+      text-decoration: underline solid #c04b4b;
+      text-decoration-thickness: 2px;
+    }
+
+    .column-eliminated,
+    .row-eliminated,
+    .eliminated {
+      opacity: 0.3;
+    }
+
+    .row-eliminated td,
+    .row-eliminated th,
+    .column-eliminated td,
+    .column-eliminated th {
+      opacity: 0.3;
+    }
+
+    .elim-marker-rows,
+    .elim-marker-cols {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .elim-marker-cols {
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .elim-step-badge {
+      min-width: 24px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #4a7a52;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 8px;
+    }
+
+    .elim-step-text {
+      font-size: 12px;
+      color: #555;
+    }
+
+
+    .final-winner {
+      border: 2px solid gold;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(255, 215, 0, 0.65);
+    }
+
+    .column-eliminated td::after,
+    .column-eliminated th::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: #c07858;
+    }
+
+    /* ── Example ── */
+    .matrix-wrap {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+    }
+    .elim-marker-rows,
+    .elim-marker-cols {
+      position: absolute;
+      right: -60px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .elim-marker-rows {
+      top: 0;
+      flex-direction: column;
+    }
+    .elim-marker-cols {
+      top: 0;
+      flex-direction: column;
+    }
+    .elim-step-badge,
+    .elim-step-text {
+      margin: 0;
+      padding: 0;
+    }
+    .elim-step-badge {
+      min-width: 24px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #4a7a52;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 8px;
+    }
+    .elim-step-text {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .matrix-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .matrix-desc {
+      font-size: 12px;
+      color: #999893;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .matrix th {
+      padding: 8px 10px;
+      text-align: center;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .matrix td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e8e6e0;
+      font-size: 14px;
+      color: #2a2a2a;
+      font-weight: 500;
+      border-radius: 4px;
+    }
+
+    .matrix td.row-header {
+      text-align: left;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+      border: none;
+      padding-left: 0;
+    }
+
+    .eliminated {
+      opacity: 0.3;
+      position: relative;
+    }
+
+    .eliminated::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #c07858;
+      transform: rotate(-10deg);
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+
+    .step-card p {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .elim-btn {
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: #666;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .elim-btn:hover { background: #d8d5ce; }
+
+    .feedback-box {
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback-box.correct {
+      background: #e4ebe5;
+      border: 1px solid #4a7a52;
+      color: #2a4a2e;
+      display: block;
+    }
+
+    .feedback-box.incorrect {
+      background: #f5ede8;
+      border: 1px solid #c07858;
+      color: #5a2a1a;
+      display: block;
+    }
+
+    .feedback-box strong { font-weight: 700; }
+
+    /* ── Practice ── */
+    .practice-intro {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .practice-intro strong { font-weight: 600; color: #1a1a1a; }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      cursor: pointer;
+    }
+
+    .quiz-option input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
+
+    .quiz-option span {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .check-btn {
+      width: 100%;
+      padding: 14px;
+      background: #4a7a52;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: opacity 0.2s;
+    }
+
+    .check-btn:active { opacity: 0.85; }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <a href="game-theory-home.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div>
+      <div class="page-title">Dominant Strategies & IEDS</div>
+      <div class="page-sub">Game Theory</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab-btn active" onclick="switchTab('theory')">Theory</div>
+    <div class="tab-btn" onclick="switchTab('example')">Example</div>
+    <div class="tab-btn" onclick="switchTab('practice')">Practice</div>
+  </div>
+
+  <!-- ══════════════ THEORY ══════════════ -->
+  <div class="section active" id="theory">
+
+    <div class="theory-card">
+      <h2>Dominant Strategy</h2>
+      <p><strong>Dominant strategy</strong> – a strategy that gives a better result than another choice.</p>
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>X</td>
+                <td><span class="br-p1">5</span>, 3</td>
+                <td><span class="br-p1">4</span>, 2</td>
+              </tr>
+              <tr>
+                <td>Y</td>
+                <td>2, 4</td>
+                <td>3, 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>X is better than Y in both columns.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Strict Dominance</h2>
+      <p><strong>Strict dominance</strong> – one strategy is better in every case.</p>
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>X</td>
+                <td><span class="br-p1">5</span>, 3</td>
+                <td><span class="br-p1">4</span>, 2</td>
+              </tr>
+              <tr>
+                <td>Y</td>
+                <td>2, 4</td>
+                <td>3, 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>X gives higher payoff in every column.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Weak Dominance</h2>
+      <p><strong>Weak dominance</strong> – one strategy is never worse and sometimes better.</p>
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>X</td>
+                <td><span class="br-p1">3</span>, 3</td>
+                <td><span class="br-p1">4</span>, 2</td>
+              </tr>
+              <tr>
+                <td>Y</td>
+                <td><span class="br-p1">3</span>, 4</td>
+                <td>2, 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>X is equal in one column, better in the other.</p>
+    </div>
+
+    <div class="theory-card">
+      <h2>Dominated Strategy</h2>
+      <p><strong>Dominated strategy</strong> – a strategy that should be removed.</p>
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>X</td>
+                <td><span class="br-p1">5</span>, 3</td>
+                <td><span class="br-p1">4</span>, 2</td>
+              </tr>
+              <tr>
+                <td>Y</td>
+                <td>2, 4</td>
+                <td>3, 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p>Y is dominated and can be eliminated.</p>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ EXAMPLE ══════════════ -->
+  <div class="section" id="example">
+
+    <div class="matrix-wrap">
+      <div class="matrix-title">IEDS: Iterated Elimination of Dominated Strategies</div>
+      <div class="matrix-desc">Remove dominated strategies step by step.</div>
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table class="matrix" id="ieds-matrix">
+            <thead>
+              <tr>
+                <th></th>
+                <th data-col="col1">A</th>
+                <th data-col="col2">B</th>
+                <th data-col="col3">C</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row1" data-row="row1">
+                <td>X</td>
+                <td data-col="col1"><span class="p1-value" data-cell="row1-col1">4</span>, <span class="p2-value" data-cell="row1-col1">2</span></td>
+                <td data-col="col2"><span class="p1-value" data-cell="row1-col2">3</span>, <span class="p2-value" data-cell="row1-col2">3</span></td>
+                <td data-col="col3"><span class="p1-value" data-cell="row1-col3">2</span>, <span class="p2-value" data-cell="row1-col3">4</span></td>
+              </tr>
+              <tr id="row2" data-row="row2">
+                <td>Y</td>
+                <td data-col="col1"><span class="p1-value" data-cell="row2-col1">1</span>, <span class="p2-value" data-cell="row2-col1">1</span></td>
+                <td data-col="col2"><span class="p1-value" data-cell="row2-col2">2</span>, <span class="p2-value" data-cell="row2-col2">2</span></td>
+                <td data-col="col3"><span class="p1-value" data-cell="row2-col3">1</span>, <span class="p2-value" data-cell="row2-col3">3</span></td>
+              </tr>
+              <tr id="row3" data-row="row3">
+                <td>Z</td>
+                <td data-col="col1"><span class="p1-value" data-cell="row3-col1">3</span>, <span class="p2-value" data-cell="row3-col1">1</span></td>
+                <td data-col="col2"><span class="p1-value" data-cell="row3-col2">4</span>, <span class="p2-value" data-cell="row3-col2">2</span></td>
+                <td data-col="col3"><span class="p1-value" data-cell="row3-col3">1</span>, <span class="p2-value" data-cell="row3-col3">3</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="elim-marker-rows" id="row-elim-marker"></div>
+          <div class="elim-marker-cols" id="col-elim-marker"></div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button id="row-y-btn" class="elim-btn" style="display:none;" onclick="eliminateRowY()">Eliminate row Y</button>
+        <button id="col-a-btn" class="elim-btn" style="display:none;" onclick="eliminateColA()">Eliminate column A</button>
+        <button id="col-b-btn" class="elim-btn" style="display:none;" onclick="eliminateColB()">Eliminate column B</button>
+        <button id="row-z-btn" class="elim-btn" style="display:none;" onclick="eliminateRowZ()">Eliminate row Z</button>
+        <button id="hint-btn" class="elim-btn" onclick="showHint()">Hint</button>
+        <button id="reset-btn" class="elim-btn" onclick="resetIEDS()">Reset IEDS</button>
+      </div>
+    </div>
+
+    <div class="step-card" id="step1">
+      <p>Step 1: Pick best responses in full matrix.</p>
+    </div>
+
+    <div class="step-card" id="step2" style="display:none;">
+      <p>Step 2: Row Y is eliminated. Pick best responses now (X/Z vs A/B/C).</p>
+    </div>
+
+    <div class="step-card" id="step3" style="display:none;">
+      <p>Step 3: Column A is eliminated. Pick best responses now (X/Z vs B/C).</p>
+    </div>
+
+    <div class="step-card" id="step4" style="display:none;">
+      <p>Step 4: Column B is eliminated.</p>
+    </div>
+
+    <div class="step-card" id="step5" style="display:none;">
+      <p>Step 5: Pick best responses with rows X/Z and columns B/C.</p>
+    </div>
+
+    <div class="step-card" id="step6" style="display:none;">
+      <p>Step 6: Eliminate column B (3rd elimination).</p>
+    </div>
+
+    <div class="step-card" id="step7" style="display:none;">
+      <p>Step 7: Pick best response in remaining column C.</p>
+    </div>
+
+    <div class="step-card" id="step8" style="display:none;">
+      <p>Step 8: Eliminate row Z (4th elimination).</p>
+    </div>
+
+    <div class="step-card" id="step9" style="display:none;">
+      <p>Final IEDS solution: (X, C) | payoff (2, 4).</p>
+    </div>
+
+    <div class="feedback-box" id="feedback"></div>
+
+  </div>
+
+  <!-- ══════════════ PRACTICE ══════════════ -->
+  <div class="section" id="practice">
+
+    <div class="practice-intro">
+      <strong>Practice 1: Identify Dominance</strong><br>
+      Look at the matrix. Which row is dominated? Is it strict or weak?
+    </div>
+
+    <div class="matrix-wrap">
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table class="matrix" id="prac1-matrix">
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="p1-row1">
+                <td>X</td>
+                <td><span class="p1-value" data-cell="prac1-row1-col1">5</span>, <span class="p2-value" data-cell="prac1-row1-col1">3</span></td>
+                <td><span class="p1-value" data-cell="prac1-row1-col2">4</span>, <span class="p2-value" data-cell="prac1-row1-col2">2</span></td>
+              </tr>
+              <tr id="p1-row2">
+                <td>Y</td>
+                <td><span class="p1-value" data-cell="prac1-row2-col1">2</span>, <span class="p2-value" data-cell="prac1-row2-col1">4</span></td>
+                <td><span class="p1-value" data-cell="prac1-row2-col2">3</span>, <span class="p2-value" data-cell="prac1-row2-col2">1</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top: 12px;">
+        <button class="elim-btn" id="prac1-check-btn" onclick="prac1CheckBestResponses()">Confirm Best Responses</button>
+        <button class="elim-btn" id="prac1-row1-btn" style="display:none;" onclick="selectRow(1)">Select Row X</button>
+        <button class="elim-btn" id="prac1-row2-btn" style="display:none;" onclick="selectRow(2)">Select Row Y</button>
+      </div>
+    </div>
+
+    <div style="margin: 12px 0;">
+      <label class="quiz-option">
+        <input type="radio" name="dominance" value="strict">
+        <span>Strict dominance</span>
+      </label>
+      <label class="quiz-option">
+        <input type="radio" name="dominance" value="weak">
+        <span>Weak dominance</span>
+      </label>
+    </div>
+
+    <button class="check-btn" onclick="checkPractice1()">Check Answer</button>
+
+    <div class="feedback-box" id="prac1-feedback"></div>
+
+    <div class="practice-intro" style="margin-top: 24px;">
+      <strong>Practice 2: Full IEDS</strong><br>
+      Eliminate step by step to solve the matrix.
+    </div>
+
+    <div class="matrix-wrap">
+      <div class="small-matrix">
+        <div class="matrix-header"><span>P2</span></div>
+        <div class="matrix-body">
+          <div class="p1-key">P1</div>
+          <table class="matrix" id="prac2-matrix">
+            <thead>
+              <tr>
+                <th></th>
+                <th>A</th>
+                <th>B</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="p2-row1">
+                <td>X</td>
+                <td data-col="col1"><span class="p1-value" data-cell="prac2-row1-col1">3</span>, <span class="p2-value" data-cell="prac2-row1-col1">1</span></td>
+                <td data-col="col2"><span class="p1-value" data-cell="prac2-row1-col2">2</span>, <span class="p2-value" data-cell="prac2-row1-col2">2</span></td>
+              </tr>
+              <tr id="p2-row2">
+                <td>Y</td>
+                <td data-col="col1"><span class="p1-value" data-cell="prac2-row2-col1">1</span>, <span class="p2-value" data-cell="prac2-row2-col1">3</span></td>
+                <td data-col="col2"><span class="p1-value" data-cell="prac2-row2-col2">4</span>, <span class="p2-value" data-cell="prac2-row2-col2">4</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top: 12px;">
+        <button class="elim-btn" id="prac2-check-btn" onclick="prac2CheckBestResponses()">Confirm Best Responses</button>
+        <button class="elim-btn" id="prac2-row1-btn" style="display:none;" onclick="prac2ElimRow(1)">Eliminate Row X</button>
+        <button class="elim-btn" id="prac2-row2-btn" style="display:none;" onclick="prac2ElimRow(2)">Eliminate Row Y</button>
+        <button class="elim-btn" id="prac2-col1-btn" style="display:none;" onclick="prac2ElimCol(1)">Eliminate Column A</button>
+        <button class="elim-btn" id="prac2-col2-btn" style="display:none;" onclick="prac2ElimCol(2)">Eliminate Column B</button>
+      </div>
+    </div>
+
+    <div class="feedback-box" id="prac2-feedback"></div>
+
+  </div>
+
+  <script>
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['theory','example','practice'][i] === name);
+      });
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    let iedsStep = 1;
+    const iedsTargets = {
+      1: {
+        p1: ['row1-col1', 'row3-col2', 'row1-col3'],
+        p2: ['row1-col3', 'row2-col3', 'row3-col3']
+      },
+      2: {
+        p1: ['row1-col1', 'row3-col2', 'row1-col3'],
+        p2: ['row1-col3', 'row3-col3']
+      },
+      3: {
+        p1: ['row3-col2', 'row1-col3'],
+        p2: ['row1-col3', 'row3-col3']
+      },
+      4: {
+        p1: ['row1-col3'],
+        p2: ['row1-col3']
+      }
+    };
+
+    const selectedP1 = new Set();
+    const selectedP2 = new Set();
+    let hintIndex = 0;
+
+    function initExample() {
+      document.querySelectorAll('#ieds-matrix .p1-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => handleClick('p1', el));
+      });
+      document.querySelectorAll('#ieds-matrix .p2-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => handleClick('p2', el));
+      });
+      updateStepUI();
+      showHint();
+    }
+
+    function handleClick(player, el) {
+      const cell = el.dataset.cell;
+      if (iedsStep > 4 || isCellEliminated(cell)) return;
+
+      const required = iedsTargets[iedsStep][player];
+      if (!required.includes(cell)) {
+        el.classList.add('wrong-selection');
+        setTimeout(() => el.classList.remove('wrong-selection'), 700);
+        showExampleFeedback('Not a best response. Try again.', false);
+        return;
+      }
+
+      const selectedSet = player === 'p1' ? selectedP1 : selectedP2;
+      const className = player === 'p1' ? 'selected-p1' : 'selected-p2';
+      if (selectedSet.has(cell)) {
+        return;
+      }
+
+      selectedSet.add(cell);
+      el.classList.add(className);
+      showExampleFeedback('Good response.', true);
+      checkExampleProgress();
+    }
+
+    function isCellEliminated(cell) {
+      const [row, col] = cell.split('-').slice(0, 2);
+      const rowEl = document.getElementById(row);
+      const colEl = document.querySelector(`#ieds-matrix th[data-col="${col}"]`);
+      return rowEl.classList.contains('eliminated') || rowEl.classList.contains('row-eliminated') ||
+        colEl?.classList.contains('eliminated') || colEl?.classList.contains('column-eliminated');
+    }
+
+    function checkExampleProgress() {
+      const required = iedsTargets[iedsStep];
+      const p1Complete = required.p1.every(c => selectedP1.has(c));
+      const p2Complete = required.p2.every(c => selectedP2.has(c));
+
+      if (p1Complete && p2Complete) {
+        showExampleFeedback('Good. Now eliminate the dominated strategy.', true);
+        if (iedsStep === 1) {
+          document.getElementById('row-y-btn').style.display = 'inline-block';
+        } else if (iedsStep === 2) {
+          document.getElementById('col-a-btn').style.display = 'inline-block';
+        } else if (iedsStep === 3) {
+          document.getElementById('col-b-btn').style.display = 'inline-block';
+        } else if (iedsStep === 4) {
+          document.getElementById('row-z-btn').style.display = 'inline-block';
+        }
+      }
+    }
+
+    function setRowEliminationMarker(step, rowId, rowName) {
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      const rowElimMarker = document.getElementById('row-elim-marker');
+      const rowTop = row.offsetTop + row.offsetHeight / 2;
+      const marker = document.createElement('div');
+      marker.className = 'elim-step-badge';
+      marker.textContent = step;
+      marker.style.position = 'absolute';
+      marker.style.right = '-46px';
+      marker.style.top = `${rowTop}px`;
+      marker.style.transform = 'translateY(-50%)';
+      marker.setAttribute('aria-label', `row ${rowName} eliminated`);
+      rowElimMarker.appendChild(marker);
+
+      const label = document.createElement('div');
+      label.className = 'elim-step-text';
+      label.textContent = `Row ${rowName} eliminated`;
+      label.style.position = 'absolute';
+      label.style.right = '-110px';
+      label.style.top = `${rowTop}px`;
+      label.style.transform = 'translateY(-50%)';
+      rowElimMarker.appendChild(label);
+    }
+
+    function setColEliminationMarker(step, colName) {
+      const colHeader = document.querySelector(`#ieds-matrix th[data-col="col${colName.toLowerCase()}"]`);
+      if (!colHeader) return;
+      const colElimMarker = document.getElementById('col-elim-marker');
+      const marker = document.createElement('div');
+      marker.className = 'elim-step-badge';
+      marker.textContent = step;
+      marker.style.position = 'absolute';
+      marker.style.right = '-46px';
+      marker.style.top = `${colHeader.offsetTop + colHeader.offsetHeight / 2}px`;
+      marker.style.transform = 'translateY(-50%)';
+      marker.setAttribute('aria-label', `column ${colName} eliminated`);
+      colElimMarker.appendChild(marker);
+
+      const label = document.createElement('div');
+      label.className = 'elim-step-text';
+      label.textContent = `Col ${colName} eliminated`;
+      label.style.position = 'absolute';
+      label.style.right = '-110px';
+      label.style.top = `${colHeader.offsetTop + colHeader.offsetHeight / 2}px`;
+      label.style.transform = 'translateY(-50%)';
+      colElimMarker.appendChild(label);
+    }
+
+    function eliminateRowY() {
+      if (iedsStep !== 1) return;
+      const row = document.getElementById('row2');
+      row.classList.add('row-eliminated');
+      row.querySelectorAll('td').forEach(td => td.classList.add('row-eliminated'));
+      setRowEliminationMarker(1, 'row2', 'Y');
+      iedsStep = 2;
+      selectedP1.clear();
+      selectedP2.clear();
+      document.querySelectorAll('.selected-p1, .selected-p2').forEach(el => el.classList.remove('selected-p1', 'selected-p2'));
+      updateStepUI();
+      document.getElementById('row-y-btn').style.display = 'none';
+      document.getElementById('col-a-btn').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      showHint();
+    }
+
+    function eliminateColA() {
+      if (iedsStep !== 2) return;
+      document.querySelectorAll('#ieds-matrix th[data-col="col1"], #ieds-matrix td[data-col="col1"]').forEach(el => {
+        el.classList.add('column-eliminated');
+      });
+      setColEliminationMarker(2, 'A');
+      iedsStep = 3;
+      selectedP1.clear();
+      selectedP2.clear();
+      document.querySelectorAll('.selected-p1, .selected-p2').forEach(el => el.classList.remove('selected-p1', 'selected-p2'));
+      updateStepUI();
+      document.getElementById('col-a-btn').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      showHint();
+    }
+
+    function eliminateColB() {
+      if (iedsStep !== 3) return;
+      document.querySelectorAll('#ieds-matrix th[data-col="col2"], #ieds-matrix td[data-col="col2"]').forEach(el => {
+        el.classList.add('column-eliminated');
+      });
+      setColEliminationMarker(3, 'B');
+      iedsStep = 4;
+      selectedP1.clear();
+      selectedP2.clear();
+      document.querySelectorAll('.selected-p1, .selected-p2').forEach(el => el.classList.remove('selected-p1', 'selected-p2'));
+      updateStepUI();
+      document.getElementById('col-b-btn').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      showHint();
+    }
+
+    function eliminateRowZ() {
+      if (iedsStep !== 4) return;
+      const row = document.getElementById('row3');
+      row.classList.add('row-eliminated');
+      row.querySelectorAll('td').forEach(td => td.classList.add('row-eliminated'));
+      setRowEliminationMarker(4, 'row3', 'Z');
+      const winner = document.querySelector('#row1 [data-col="col3"]');
+      if (winner) {
+        winner.classList.add('final-winner');
+      }
+      iedsStep = 5;
+      updateStepUI();
+      document.getElementById('row-z-btn').style.display = 'none';
+      showExampleFeedback('Great! Final IEDS solution: (X, C) with payoff (2, 4).', true);
+    }
+
+    function resetIEDS() {
+      iedsStep = 1;
+      selectedP1.clear();
+      selectedP2.clear();
+      document.querySelectorAll('#ieds-matrix .selected-p1, #ieds-matrix .selected-p2, #ieds-matrix .wrong-selection, #ieds-matrix .final-winner').forEach(el => el.classList.remove('selected-p1', 'selected-p2', 'wrong-selection', 'final-winner'));
+      document.querySelectorAll('#ieds-matrix tr, #ieds-matrix th, #ieds-matrix td').forEach(el => {
+        el.classList.remove('row-eliminated', 'column-eliminated', 'eliminated');
+        delete el.dataset.elimOrder;
+      });
+      document.getElementById('row-y-btn').style.display = 'none';
+      document.getElementById('col-a-btn').style.display = 'none';
+      document.getElementById('col-b-btn').style.display = 'none';
+      document.getElementById('row-z-btn').style.display = 'none';
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('row-elim-marker').innerHTML = '';
+      document.getElementById('col-elim-marker').innerHTML = '';
+      updateStepUI();
+      showHint();
+    }
+
+    function updateStepUI() {
+      document.getElementById('step1').style.display = iedsStep === 1 ? 'block' : 'none';
+      document.getElementById('step2').style.display = iedsStep === 2 ? 'block' : 'none';
+      document.getElementById('step3').style.display = iedsStep === 3 ? 'block' : 'none';
+      document.getElementById('step4').style.display = iedsStep === 4 ? 'block' : 'none';
+      document.getElementById('step5').style.display = 'none';
+      document.getElementById('step6').style.display = 'none';
+      document.getElementById('step7').style.display = 'none';
+      document.getElementById('step8').style.display = 'none';
+      document.getElementById('step9').style.display = iedsStep === 5 ? 'block' : 'none';
+    }
+
+    function showExampleFeedback(message, success) {
+      const fb = document.getElementById('feedback');
+      fb.innerHTML = message;
+      fb.className = 'feedback-box ' + (success ? 'correct' : 'incorrect');
+      fb.style.display = 'block';
+    }
+
+    function showHint() {
+      const fb = document.getElementById('feedback');
+      let msg = '';
+      if (iedsStep === 1) {
+        msg = 'Step 1: Compare Player 1\'s payoffs across every column to choose best responses.';
+      } else if (iedsStep === 2) {
+        msg = 'Step 2: With row Y gone, compare Player 1 and Player 2 payoffs for X and Z.';
+      } else if (iedsStep === 3) {
+        msg = 'Step 3: After removing A, compare Player 2 payoffs between columns B and C.';
+      } else if (iedsStep === 4) {
+        msg = 'Step 4: With only column C left, compare Player 1 payoffs between X and Z.';
+      } else {
+        msg = 'Great work! You have reached the final IEDS solution.';
+      }
+      fb.innerHTML = msg;
+      fb.className = 'feedback-box';
+      fb.style.display = 'block';
+    }
+
+    // Practice 1 & 2 functions remain unchanged
+    let selectedRow = null;
+    let prac1SelectedP1 = new Set();
+    let prac1SelectedP2 = new Set();
+    let prac1BestResponsesConfirmed = false;
+    const prac1Targets = {
+      p1: ['prac1-row1-col1', 'prac1-row1-col2'],
+      p2: ['prac1-row1-col1', 'prac1-row2-col1']
+    };
+
+    function selectRow(rowNum) {
+      selectedRow = rowNum;
+      document.querySelectorAll('#prac1-matrix tr').forEach(tr => tr.classList.remove('selected'));
+      document.getElementById('p1-row' + rowNum).classList.add('selected');
+      showPractice1Feedback('Row ' + (rowNum === 1 ? 'X' : 'Y') + ' selected. Now choose strict/weak.', true);
+    }
+
+    function prac1Init() {
+      document.querySelectorAll('#prac1-matrix .p1-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => prac1HandleClick('p1', el));
+      });
+      document.querySelectorAll('#prac1-matrix .p2-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => prac1HandleClick('p2', el));
+      });
+    }
+
+    function prac1HandleClick(player, el) {
+      const cell = el.dataset.cell;
+      const targets = prac1Targets[player];
+      if (!targets.includes(cell)) {
+        el.classList.add('wrong-selection');
+        setTimeout(() => el.classList.remove('wrong-selection'), 700);
+        showPractice1Feedback('Not a best response for Player ' + (player === 'p1' ? '1' : '2') + '.', false);
+        return;
+      }
+      const selectedSet = player === 'p1' ? prac1SelectedP1 : prac1SelectedP2;
+      const className = player === 'p1' ? 'selected-p1' : 'selected-p2';
+      if (selectedSet.has(cell)) return;
+      selectedSet.add(cell);
+      el.classList.add(className);
+      showPractice1Feedback('Best response OK.', true);
+    }
+
+    function prac1CheckBestResponses() {
+      const p1Done = prac1Targets.p1.every(c => prac1SelectedP1.has(c));
+      const p2Done = prac1Targets.p2.every(c => prac1SelectedP2.has(c));
+      if (p1Done && p2Done) {
+        prac1BestResponsesConfirmed = true;
+        document.getElementById('prac1-check-btn').style.display = 'none';
+        document.getElementById('prac1-row1-btn').style.display = 'inline-block';
+        document.getElementById('prac1-row2-btn').style.display = 'inline-block';
+        showPractice1Feedback('Best responses confirmed. Choose dominated row.', true);
+      } else {
+        showPractice1Feedback('Find all best responses first.', false);
+      }
+    }
+
+    function showPractice1Feedback(message, success) {
+      const fb = document.getElementById('prac1-feedback');
+      fb.className = 'feedback-box ' + (success ? 'correct' : 'incorrect');
+      fb.innerHTML = message;
+      fb.style.display = 'block';
+    }
+
+    let prac2SelectedP1 = new Set();
+    let prac2SelectedP2 = new Set();
+    const prac2Targets = {
+      p1: ['prac2-row1-col1', 'prac2-row2-col2'],
+      p2: ['prac2-row1-col2', 'prac2-row2-col2']
+    };
+
+    function prac2Init() {
+      document.querySelectorAll('#prac2-matrix .p1-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => prac2HandleClick('p1', el));
+      });
+      document.querySelectorAll('#prac2-matrix .p2-value').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => prac2HandleClick('p2', el));
+      });
+    }
+
+    function prac2HandleClick(player, el) {
+      const cell = el.dataset.cell;
+      const targets = prac2Targets[player];
+      if (!targets.includes(cell)) {
+        el.classList.add('wrong-selection');
+        setTimeout(() => el.classList.remove('wrong-selection'), 700);
+        showPractice2Feedback('Not a best response for Player ' + (player === 'p1' ? '1' : '2') + '.', false);
+        return;
+      }
+
+      const selectedSet = player === 'p1' ? prac2SelectedP1 : prac2SelectedP2;
+      const className = player === 'p1' ? 'selected-p1' : 'selected-p2';
+      if (selectedSet.has(cell)) return;
+      selectedSet.add(cell);
+      el.classList.add(className);
+      showPractice2Feedback('Good best response selected.', true);
+      prac2CheckBestResponses();
+    }
+
+    function prac2CheckBestResponses() {
+      const p1Done = prac2Targets.p1.every(c => prac2SelectedP1.has(c));
+      const p2Done = prac2Targets.p2.every(c => prac2SelectedP2.has(c));
+
+      if (p1Done && p2Done) {
+        showPractice2Feedback('Best responses in place. Now eliminate row X.', true);
+        document.getElementById('prac2-row1-btn').style.display = 'inline-block';
+        document.getElementById('prac2-check-btn').style.display = 'none';
+      }
+    }
+
+    function showPractice2Feedback(message, correct) {
+      const fb = document.getElementById('prac2-feedback');
+      fb.className = 'feedback-box ' + (correct ? 'correct' : 'incorrect');
+      fb.innerHTML = message;
+      fb.style.display = 'block';
+    }
+
+    function checkPractice1() {
+      const dom = document.querySelector('input[name="dominance"]:checked');
+      const fb = document.getElementById('prac1-feedback');
+      fb.className = 'feedback-box';
+      if (selectedRow === 2 && dom && dom.value === 'strict') {
+        fb.classList.add('correct');
+        fb.innerHTML = '<strong>Correct!</strong> Row Y is strictly dominated by Row X.';
+      } else {
+        fb.classList.add('incorrect');
+        fb.innerHTML = '<strong>Not quite.</strong> Row Y is strictly dominated.';
+      }
+      fb.style.display = 'block';
+    }
+
+    let prac2Step = 1;
+    function prac2ElimRow(rowNum) {
+      if (prac2Step === 1 && rowNum === 1) {
+        const row = document.getElementById('p2-row' + rowNum);
+        row.classList.add('row-eliminated');
+        row.dataset.elimOrder = '1';
+        row.querySelectorAll('td').forEach(td => td.classList.add('row-eliminated'));
+        document.querySelectorAll('button[onclick^="prac2ElimRow"]').forEach(btn => btn.style.display = 'none');
+        document.querySelector('button[onclick="prac2ElimCol(1)"]').style.display = 'inline-block';
+        prac2Step = 2;
+      } else {
+        const fb = document.getElementById('prac2-feedback');
+        fb.className = 'feedback-box incorrect';
+        fb.innerHTML = 'Not dominated. Try again.';
+        fb.style.display = 'block';
+      }
+    }
+
+    function prac2ElimCol(colNum) {
+      if (prac2Step === 2 && colNum === 1) {
+        document.querySelectorAll('#prac2-matrix th:nth-child(' + (colNum + 1) + '), #prac2-matrix td:nth-child(' + (colNum + 1) + ')').forEach((cell, idx) => {
+          cell.classList.add('column-eliminated');
+          if (cell.tagName.toLowerCase() === 'th') {
+            cell.dataset.elimOrder = '2';
+          }
+        });
+        const fb = document.getElementById('prac2-feedback');
+        fb.className = 'feedback-box correct';
+        fb.innerHTML = 'Great! Final outcome is (Y, B) = 4, 4.';
+        fb.style.display = 'block';
+      } else {
+        const fb = document.getElementById('prac2-feedback');
+        fb.className = 'feedback-box incorrect';
+        fb.innerHTML = 'Not dominated. Try again.';
+        fb.style.display = 'block';
+      }
+    }
+
+    initExample();
+    prac1Init();
+    prac2Init();
+  </script>
+
+</body>
+</html>
