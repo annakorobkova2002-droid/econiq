@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nash Equilibrium — EconoIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 1px;
+    }
+
+    /* ── Section tabs ── */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 0 24px 24px;
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #d8d5ce;
+      background: #eae8e2;
+      color: #999893;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #4a7a52;
+      border-color: #4a7a52;
+      color: #ffffff;
+    }
+
+    /* ── Content sections ── */
+    .section { display: none; padding: 0 24px; }
+    .section.active { display: block; }
+
+    /* ── Theory ── */
+    .theory-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+    }
+
+    .theory-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .theory-card p:last-child { margin-bottom: 0; }
+
+    .highlight-box {
+      background: #e4ebe5;
+      border-left: 3px solid #4a7a52;
+      border-radius: 0 10px 10px 0;
+      padding: 12px 14px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: #2a4a2e;
+      line-height: 1.6;
+    }
+
+    .definition {
+      background: #f8f7f4;
+      border: 1px solid #e0ddd7;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
+    .definition-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #4a7a52;
+      margin-bottom: 6px;
+    }
+
+    .definition p {
+      font-size: 14px;
+      color: #2a2a2a;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .key-point {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .key-point:last-child { margin-bottom: 0; }
+
+    .key-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4a7a52;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .key-point p { margin: 0; }
+
+    /* ── Example ── */
+    .example-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #aaa89f;
+      margin-bottom: 10px;
+    }
+
+    .matrix-wrap {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+    }
+
+    .matrix-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .matrix-desc {
+      font-size: 12px;
+      color: #999893;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .matrix th {
+      padding: 8px 10px;
+      text-align: center;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .matrix td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #e8e6e0;
+      font-size: 14px;
+      color: #2a2a2a;
+      font-weight: 500;
+      border-radius: 4px;
+    }
+
+    .matrix td.row-header {
+      text-align: left;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+      border: none;
+      padding-left: 0;
+    }
+
+    .matrix td.nash {
+      background: #e4ebe5;
+      border-color: #4a7a52;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #4a7a52;
+      margin-bottom: 6px;
+    }
+
+    .step-card p {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .step-card .result {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: #f2f1ed;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #2a2a2a;
+      font-weight: 500;
+    }
+
+    /* ── Practice ── */
+    .practice-intro {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .practice-intro strong { font-weight: 600; color: #1a1a1a; }
+
+    .practice-matrix-wrap {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    table.pmatrix {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+      font-size: 14px;
+    }
+
+    .pmatrix th {
+      padding: 8px 6px;
+      text-align: center;
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .pmatrix td.row-header {
+      color: #999893;
+      font-weight: 600;
+      font-size: 12px;
+      padding-right: 8px;
+      white-space: nowrap;
+    }
+
+    .pmatrix td.cell {
+      background: #f8f7f4;
+      border: 1px solid #e8e6e0;
+      border-radius: 10px;
+      padding: 12px 6px;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .payoff-pair {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .p1 {
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      color: #2a2a2a;
+      border-bottom: 2px solid transparent;
+    }
+
+    .p2 {
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      color: #2a2a2a;
+      border-bottom: 2px solid transparent;
+    }
+
+    .p1.marked { border-bottom: 2.5px solid #4a7a52; color: #2a4a2e; }
+    .p2.marked { border-bottom: 2.5px solid #6a84a0; color: #1a3a5a; }
+
+    .comma { color: #aaa89f; font-size: 13px; }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .legend-line {
+      width: 20px;
+      height: 2.5px;
+      border-radius: 2px;
+    }
+
+    .check-btn {
+      width: 100%;
+      padding: 14px;
+      background: #4a7a52;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: opacity 0.2s;
+    }
+
+    .check-btn:active { opacity: 0.85; }
+
+    .reset-btn {
+      width: 100%;
+      padding: 12px;
+      background: #eae8e2;
+      color: #666;
+      border: 1px solid #d8d5ce;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .feedback-box {
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback-box.correct {
+      background: #e4ebe5;
+      border: 1px solid #4a7a52;
+      color: #2a4a2e;
+      display: block;
+    }
+
+    .feedback-box.incorrect {
+      background: #f5ede8;
+      border: 1px solid #c07858;
+      color: #5a2a1a;
+      display: block;
+    }
+
+    .feedback-box strong { font-weight: 700; }
+
+    .progress-hint {
+      font-size: 12px;
+      color: #aaa89f;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <a href="index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div>
+      <div class="page-title">Nash Equilibrium</div>
+      <div class="page-sub">Game Theory</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab-btn active" onclick="switchTab('theory')">Theory</div>
+    <div class="tab-btn" onclick="switchTab('example')">Example</div>
+    <div class="tab-btn" onclick="switchTab('practice')">Practice</div>
+  </div>
+
+  <!-- ══════════════ THEORY ══════════════ -->
+  <div class="section active" id="theory">
+
+    <div class="theory-card">
+      <h2>What is a Nash Equilibrium?</h2>
+      <p>In any strategic situation, each player chooses a strategy. A <strong>Nash Equilibrium</strong> is reached when no player can improve their outcome by changing their strategy — assuming everyone else keeps theirs the same.</p>
+      <div class="highlight-box">
+        Think of it as a <strong>stable resting point</strong>: you look at what the other player is doing, and you think "given their choice, I wouldn't want to switch."
+      </div>
+      <p>It was developed by mathematician John Nash in 1950 and is the most important concept in game theory.</p>
+    </div>
+
+    <div class="theory-card">
+      <div class="definition">
+        <div class="definition-label">Formal definition</div>
+        <p>A strategy profile (s₁, s₂) is a Nash Equilibrium if, for every player i, sᵢ is a best response to the other player's strategy — meaning no player can do better by deviating unilaterally.</p>
+      </div>
+    </div>
+
+    <div class="theory-card">
+      <h2>Three things to remember</h2>
+      <div class="key-point">
+        <div class="key-dot"></div>
+        <p><strong>Stable, not optimal.</strong> A Nash Equilibrium is stable — nobody wants to deviate. But it doesn't mean it's the best outcome for everyone.</p>
+      </div>
+      <div class="key-point">
+        <div class="key-dot"></div>
+        <p><strong>Unilateral deviation.</strong> The key word is "unilaterally" — one player changes while the other stays put. If both change together, that's a different question.</p>
+      </div>
+      <div class="key-point">
+        <div class="key-dot"></div>
+        <p><strong>Can be multiple or none.</strong> A game can have zero, one, or many Nash Equilibria in pure strategies. If there are none, you need mixed strategies.</p>
+      </div>
+    </div>
+
+    <div style="padding: 4px 0 8px;">
+      <button class="check-btn" onclick="switchTab('example')">See a worked example →</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ EXAMPLE ══════════════ -->
+  <div class="section" id="example">
+
+    <div class="matrix-wrap">
+      <div class="matrix-title">The Prisoner's Dilemma</div>
+      <div class="matrix-desc">Two suspects are interrogated separately. Each can either stay Silent or Confess. The numbers show years in prison — lower is better.</div>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>P2: Silent</th>
+            <th>P2: Confess</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-header">P1: Silent</td>
+            <td>−1, −1</td>
+            <td>−10, 0</td>
+          </tr>
+          <tr>
+            <td class="row-header">P1: Confess</td>
+            <td>0, −10</td>
+            <td class="nash">−5, −5 ✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="example-label">How to find it — step by step</div>
+
+    <div class="step-card">
+      <div class="step-num">Step 1 — Player 1's best responses</div>
+      <p>Look at each column and find P1's highest payoff (first number).</p>
+      <div class="result">If P2 plays Silent: P1 gets −1 (Silent) or 0 (Confess) → <strong>Confess wins</strong><br>If P2 plays Confess: P1 gets −10 (Silent) or −5 (Confess) → <strong>Confess wins</strong></div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 2 — Player 2's best responses</div>
+      <p>Look at each row and find P2's highest payoff (second number).</p>
+      <div class="result">If P1 plays Silent: P2 gets −1 (Silent) or 0 (Confess) → <strong>Confess wins</strong><br>If P1 plays Confess: P2 gets −10 (Silent) or −5 (Confess) → <strong>Confess wins</strong></div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 3 — Find the intersection</div>
+      <p>The Nash Equilibrium is where both players are playing their best response at the same time.</p>
+      <div class="result">Both players best-respond with <strong>Confess</strong> → Nash Equilibrium is <strong>(Confess, Confess) = −5, −5</strong></div>
+    </div>
+
+    <div class="theory-card" style="margin-top:4px;">
+      <h2>The paradox</h2>
+      <p>Notice that (Silent, Silent) gives both players −1, which is better than −5. But it's not stable — if you're both silent, each player is tempted to confess and get 0 instead of −1.</p>
+      <div class="highlight-box">This is why the Nash Equilibrium isn't always the "best" outcome — it's just the outcome where nobody has an incentive to change alone.</div>
+    </div>
+
+    <div style="padding: 4px 0 8px;">
+      <button class="check-btn" onclick="switchTab('practice')">Try it yourself →</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════ PRACTICE ══════════════ -->
+  <div class="section" id="practice">
+
+    <div class="practice-intro">
+      <strong>Two firms — advertise or not?</strong><br>
+      Each firm chooses to Advertise (A) or Not Advertise (N). Tap each player's payoff number to mark their best responses. Find where both players' best responses overlap — that's the Nash Equilibrium.
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-line" style="background:#4a7a52;"></div>
+        <span>Player 1 best response</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-line" style="background:#6a84a0;"></div>
+        <span>Player 2 best response</span>
+      </div>
+    </div>
+
+    <div class="practice-matrix-wrap">
+      <table class="pmatrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>P2: Advertise</th>
+            <th>P2: Not Advertise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-header">P1: Advertise</td>
+            <td class="cell" id="cell-aa">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-aa" onclick="markP1('aa')">3</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-aa" onclick="markP2('aa')">3</span>
+              </div>
+            </td>
+            <td class="cell" id="cell-an">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-an" onclick="markP1('an')">5</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-an" onclick="markP2('an')">1</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="row-header">P1: Not Advertise</td>
+            <td class="cell" id="cell-na">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-na" onclick="markP1('na')">1</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-na" onclick="markP2('na')">5</span>
+              </div>
+            </td>
+            <td class="cell" id="cell-nn">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-nn" onclick="markP1('nn')">2</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-nn" onclick="markP2('nn')">2</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="progress-hint" id="progress-hint">Tap Player 1's best responses first (green), then Player 2's (blue)</div>
+
+    <button class="check-btn" onclick="checkAnswer()">Check my answer</button>
+    <button class="reset-btn" onclick="resetPractice()">Reset</button>
+
+    <div class="feedback-box" id="feedback"></div>
+
+    <div class="practice-intro" style="margin-top: 24px;">
+      <strong>Two ice cream vendors — beach or park?</strong><br>
+      Each vendor chooses to set up at the Beach or Park. Tap each player's payoff number to mark their best responses. Find where both players' best responses overlap — that's the Nash Equilibrium.
+    </div>
+
+    <div class="practice-matrix-wrap">
+      <table class="pmatrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>P2: Beach</th>
+            <th>P2: Park</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-header">P1: Beach</td>
+            <td class="cell" id="cell-bb">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-bb" onclick="markP12('bb')">3</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-bb" onclick="markP22('bb')">3</span>
+              </div>
+            </td>
+            <td class="cell" id="cell-bp">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-bp" onclick="markP12('bp')">5</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-bp" onclick="markP22('bp')">1</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="row-header">P1: Park</td>
+            <td class="cell" id="cell-pb">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-pb" onclick="markP12('pb')">1</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-pb" onclick="markP22('pb')">5</span>
+              </div>
+            </td>
+            <td class="cell" id="cell-pp">
+              <div class="payoff-pair">
+                <span class="p1" id="p1-pp" onclick="markP12('pp')">4</span>
+                <span class="comma">,</span>
+                <span class="p2" id="p2-pp" onclick="markP22('pp')">4</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="progress-hint" id="progress-hint2">Tap Player 1's best responses first (green), then Player 2's (blue)</div>
+
+    <button class="check-btn" onclick="checkAnswer2()">Check my answer</button>
+    <button class="reset-btn" onclick="resetPractice2()">Reset</button>
+
+    <div class="feedback-box" id="feedback2"></div>
+
+  </div>
+
+  <script>
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', ['theory','example','practice'][i] === name);
+      });
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    const p1Marked = new Set();
+    const p2Marked = new Set();
+
+    function markP1(cell) {
+      const el = document.getElementById('p1-' + cell);
+      if (el.classList.contains('marked')) {
+        el.classList.remove('marked');
+        p1Marked.delete(cell);
+      } else {
+        el.classList.add('marked');
+        p1Marked.add(cell);
+      }
+      updateHint();
+    }
+
+    function markP2(cell) {
+      const el = document.getElementById('p2-' + cell);
+      if (el.classList.contains('marked')) {
+        el.classList.remove('marked');
+        p2Marked.delete(cell);
+      } else {
+        el.classList.add('marked');
+        p2Marked.add(cell);
+      }
+      updateHint();
+    }
+
+    function updateHint() {
+      const total = p1Marked.size + p2Marked.size;
+      const hint = document.getElementById('progress-hint');
+      if (total === 0) hint.textContent = 'Tap Player 1\'s best responses first (green), then Player 2\'s (blue)';
+      else if (p1Marked.size === 0) hint.textContent = 'Good — now mark Player 1\'s best responses in green';
+      else if (p2Marked.size === 0) hint.textContent = 'Good — now mark Player 2\'s best responses in blue';
+      else hint.textContent = 'When ready, press Check my answer';
+    }
+
+    function checkAnswer() {
+      const correctP1 = new Set(['aa', 'an']);
+      const correctP2 = new Set(['aa', 'na']);
+
+      const p1correct = [...correctP1].every(c => p1Marked.has(c)) && p1Marked.size === correctP1.size;
+      const p2correct = [...correctP2].every(c => p2Marked.has(c)) && p2Marked.size === correctP2.size;
+
+      const fb = document.getElementById('feedback');
+      fb.className = 'feedback-box';
+
+      if (p1correct && p2correct) {
+        fb.classList.add('correct');
+        fb.innerHTML = '<strong>Correct!</strong> Player 1\'s best responses are both Advertise cells (3 and 5). Player 2\'s best responses are also both Advertise cells (3 and 5). The Nash Equilibrium is <strong>(Advertise, Advertise) = 3, 3</strong> — the only cell where both underlines overlap. Neither firm wants to switch to Not Advertise given the other is advertising.';
+      } else {
+        fb.classList.add('incorrect');
+        let hint = '<strong>Not quite.</strong> ';
+        if (!p1correct) hint += 'For Player 1: compare payoffs in each column — which row gives P1 the higher number? ';
+        if (!p2correct) hint += 'For Player 2: compare payoffs in each row — which column gives P2 the higher number?';
+        fb.innerHTML = hint;
+      }
+    }
+
+    function resetPractice() {
+      p1Marked.clear();
+      p2Marked.clear();
+      document.querySelectorAll('.p1, .p2').forEach(el => el.classList.remove('marked'));
+      document.querySelectorAll('.cell').forEach(el => el.style.background = '');
+      document.getElementById('feedback').className = 'feedback-box';
+      updateHint();
+    }
+
+    const p1Marked2 = new Set();
+    const p2Marked2 = new Set();
+
+    function markP12(cell) {
+      const el = document.getElementById('p1-' + cell);
+      if (el.classList.contains('marked')) {
+        el.classList.remove('marked');
+        p1Marked2.delete(cell);
+      } else {
+        el.classList.add('marked');
+        p1Marked2.add(cell);
+      }
+      updateHint2();
+    }
+
+    function markP22(cell) {
+      const el = document.getElementById('p2-' + cell);
+      if (el.classList.contains('marked')) {
+        el.classList.remove('marked');
+        p2Marked2.delete(cell);
+      } else {
+        el.classList.add('marked');
+        p2Marked2.add(cell);
+      }
+      updateHint2();
+    }
+
+    function updateHint2() {
+      const total = p1Marked2.size + p2Marked2.size;
+      const hint = document.getElementById('progress-hint2');
+      if (total === 0) hint.textContent = 'Tap Player 1\'s best responses first (green), then Player 2\'s (blue)';
+      else if (p1Marked2.size === 0) hint.textContent = 'Good — now mark Player 1\'s best responses in green';
+      else if (p2Marked2.size === 0) hint.textContent = 'Good — now mark Player 2\'s best responses in blue';
+      else hint.textContent = 'When ready, press Check my answer';
+    }
+
+    function checkAnswer2() {
+      const correctP1 = new Set(['bb', 'bp']);
+      const correctP2 = new Set(['bb', 'pb']);
+
+      const p1correct = [...correctP1].every(c => p1Marked2.has(c)) && p1Marked2.size === correctP1.size;
+      const p2correct = [...correctP2].every(c => p2Marked2.has(c)) && p2Marked2.size === correctP2.size;
+
+      const fb = document.getElementById('feedback2');
+      fb.className = 'feedback-box';
+
+      if (p1correct && p2correct) {
+        fb.classList.add('correct');
+        fb.innerHTML = '<strong>Correct!</strong> Player 1\'s best responses are both Beach cells (3 and 5). Player 2\'s best responses are also both Beach cells (3 and 5). The Nash Equilibrium is <strong>(Beach, Beach) = 3, 3</strong> — the only cell where both underlines overlap. Neither vendor wants to switch to Park given the other is at the beach.';
+      } else {
+        fb.classList.add('incorrect');
+        let hint = '<strong>Not quite.</strong> ';
+        if (!p1correct) hint += 'For Player 1: compare payoffs in each column — which row gives P1 the higher number? ';
+        if (!p2correct) hint += 'For Player 2: compare payoffs in each row — which column gives P2 the higher number?';
+        fb.innerHTML = hint;
+      }
+    }
+
+    function resetPractice2() {
+      p1Marked2.clear();
+      p2Marked2.clear();
+      document.querySelectorAll('.p1, .p2').forEach(el => el.classList.remove('marked'));
+      document.querySelectorAll('.cell').forEach(el => el.style.background = '');
+      document.getElementById('feedback2').className = 'feedback-box';
+      updateHint2();
+    }
+
+  </script>
+
+</body>
+</html>
