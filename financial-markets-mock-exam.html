@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mock Exam — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Shared nav ── */
+    .topnav {
+      padding: 54px 24px 0;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: #eae8e2; border: 1px solid #d8d5ce;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-decoration: none; flex-shrink: 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .back-btn:active { transform: scale(0.93); opacity: 0.8; }
+
+    .nav-info { flex: 1; min-width: 0; }
+    .page-title { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .page-sub   { font-size: 12px; color: #999893; margin-top: 2px; }
+
+    /* ══════════════════════════════════════
+       START SCREEN
+    ══════════════════════════════════════ */
+    .start-card {
+      margin: 20px 24px 0;
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 22px;
+      padding: 26px 22px;
+      animation: fadeUp 0.38s ease both;
+    }
+
+    .start-icon {
+      width: 54px; height: 54px;
+      border-radius: 16px;
+      background: #dce9ea; border: 1px solid #bcd4d7;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .start-title {
+      font-size: 21px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .start-meta {
+      font-size: 13px; color: #999893;
+      font-weight: 500; margin-bottom: 24px;
+    }
+
+    .start-rules-label {
+      font-size: 10px; font-weight: 700;
+      color: #aaa89f;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .start-rules { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+
+    .rule-item {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+
+    .rule-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(45,122,132,0.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rule-text { font-size: 13px; color: #3a3a3a; line-height: 1.5; padding-top: 4px; }
+
+    #start-btn {
+      width: 100%; padding: 16px;
+      background: #2d7a84; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 16px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    #start-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    /* ══════════════════════════════════════
+       EXAM SCREEN
+    ══════════════════════════════════════ */
+    #exam-screen { display: none; padding-bottom: 160px; }
+
+    .exam-topbar {
+      padding: 54px 24px 14px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0;
+      background: #f2f1ed;
+      border-bottom: 1px solid #e8e5df;
+      z-index: 20;
+    }
+
+    #timer-display {
+      flex: 1; text-align: center;
+      font-size: 22px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #timer-display.warn  { color: #c07858; }
+    #timer-display.alert { color: #c05050; }
+
+    .timer-spacer { width: 36px; flex-shrink: 0; }
+
+    /* Dot navigation */
+    .dot-nav-wrap { padding: 14px 24px 4px; overflow: hidden; }
+
+    .dot-nav {
+      display: flex; gap: 8px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+
+    .dot-nav::-webkit-scrollbar { display: none; }
+
+    .q-dot {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      border: 1.5px solid #e0ddd7;
+      background: #ffffff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #aaa89f;
+      cursor: pointer; flex-shrink: 0;
+      scroll-snap-align: start;
+      transition: transform 0.12s, background 0.15s, border-color 0.15s;
+    }
+
+    .q-dot:active { transform: scale(0.88); }
+
+    .q-dot.answered {
+      background: #2d7a84; border-color: #2d7a84; color: #fff;
+    }
+
+    .q-dot.active {
+      border: 2px solid #2d7a84; color: #2d7a84;
+    }
+
+    .q-dot.answered.active {
+      background: #2d7a84; border: 2.5px solid #1a5a64; color: #fff;
+      box-shadow: 0 0 0 3px rgba(45,122,132,0.22);
+    }
+
+    /* Question area */
+    .exam-question-area { padding: 14px 24px 0; }
+
+    .question-card {
+      background: #ffffff; border: 1px solid #e0ddd7;
+      border-radius: 20px; padding: 22px 20px 20px;
+      margin-bottom: 12px;
+    }
+
+    .q-number {
+      font-size: 11px; font-weight: 700; color: #2d7a84;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .q-topic-label {
+      font-size: 10px; font-weight: 600; color: #aaa89f;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .q-text {
+      font-size: 16px; font-weight: 600;
+      color: #1a1a1a; line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    .options-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-btn {
+      width: 100%;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: #ffffff; border: 1.5px solid #e0ddd7;
+      border-radius: 16px;
+      font-size: 14px; font-weight: 500;
+      color: #2a2a2a; text-align: left;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.12s, background 0.15s, border-color 0.15s;
+      line-height: 1.45;
+    }
+
+    .option-btn:active { transform: scale(0.97); }
+
+    .opt-letter {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: #f2f1ed; border: 1px solid #e0ddd7;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #999893;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .opt-text { flex: 1; }
+
+    .option-btn.selected {
+      background: rgba(45,122,132,0.1); border-color: #2d7a84;
+    }
+
+    .option-btn.selected .opt-letter {
+      background: #2d7a84; border-color: #2d7a84; color: #fff;
+    }
+
+    /* Fixed footer */
+    .exam-footer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 24px 28px;
+      background: #f2f1ed;
+      border-top: 1px solid #e0ddd7;
+      z-index: 20;
+    }
+
+    .exam-nav-row { display: flex; gap: 10px; margin-bottom: 10px; }
+
+    .nav-btn {
+      flex: 1; padding: 13px;
+      background: #eae8e2; border: 1px solid #d8d5ce;
+      border-radius: 14px;
+      font-size: 14px; font-weight: 600; color: #555;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .nav-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+    #submit-btn {
+      width: 100%; padding: 14px;
+      background: #2d7a84; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 14px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    #submit-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    /* ══════════════════════════════════════
+       RESULTS SCREEN
+    ══════════════════════════════════════ */
+    #results-screen { display: none; animation: fadeUp 0.4s ease both; }
+
+    .results-body { padding: 28px 24px 60px; text-align: center; }
+
+    .results-header-label {
+      font-size: 11px; font-weight: 700; color: #2d7a84;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 28px;
+    }
+
+    .score-ring-wrap {
+      width: 160px; height: 160px;
+      margin: 0 auto 20px; position: relative;
+    }
+
+    .score-ring {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(#e0ddd7 0deg 360deg);
+    }
+
+    .score-ring-inner {
+      position: absolute; inset: 14px;
+      background: #f2f1ed; border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    .score-ring-num {
+      font-size: 40px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.05em; line-height: 1;
+    }
+
+    .score-ring-denom { font-size: 14px; color: #999893; font-weight: 600; margin-top: 3px; }
+
+    .score-pct {
+      font-size: 30px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.04em; margin-bottom: 10px;
+    }
+
+    .score-grade {
+      display: inline-block;
+      font-size: 18px; font-weight: 800; color: #fff;
+      border-radius: 12px; padding: 6px 22px;
+      margin-bottom: 8px;
+    }
+
+    .time-taken-label {
+      font-size: 13px; color: #999893; margin-bottom: 28px;
+    }
+
+    .answer-grid-label {
+      font-size: 10px; font-weight: 700; color: #aaa89f;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      text-align: left; margin-bottom: 12px;
+    }
+
+    #answer-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .ans-dot {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+
+    .ans-dot.correct { background: #7ab87a; }
+    .ans-dot.wrong   { background: #c07878; }
+    .ans-dot.skipped { background: #d8d5ce; color: #999893; }
+
+    .results-retry-btn {
+      width: 100%; padding: 15px;
+      background: #2d7a84; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-retry-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .results-back-btn {
+      width: 100%; padding: 14px;
+      background: #eae8e2; color: #555;
+      border: 1px solid #d8d5ce; border-radius: 16px;
+      font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-back-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .page-end { height: 48px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- ══ START SCREEN ══ -->
+  <div id="start-screen">
+
+    <div class="topnav">
+      <a href="financial-markets-home.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </a>
+      <div class="nav-info">
+        <div class="page-title">Mock Exam</div>
+        <div class="page-sub">Financial Markets</div>
+      </div>
+    </div>
+
+    <div class="start-card">
+
+      <div class="start-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2d7a84" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+
+      <div class="start-title">Full Mock Exam</div>
+      <div class="start-meta">25 questions &nbsp;·&nbsp; 40 minutes &nbsp;·&nbsp; All topics</div>
+
+      <div class="start-rules-label">Exam Rules</div>
+
+      <div class="start-rules">
+        <div class="rule-item">
+          <div class="rule-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2d7a84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+          </div>
+          <div class="rule-text">Work through all 25 questions at your own pace.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2d7a84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </div>
+          <div class="rule-text">Your answers are saved as you navigate between questions.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2d7a84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="rule-text">The exam auto-submits when time runs out.</div>
+        </div>
+      </div>
+
+      <button id="start-btn" onclick="startExam()">Start Exam →</button>
+
+    </div>
+    <div class="page-end"></div>
+  </div>
+
+  <!-- ══ EXAM SCREEN ══ -->
+  <div id="exam-screen">
+
+    <div class="exam-topbar">
+      <a href="#" class="back-btn" onclick="return confirmExit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </a>
+      <div id="timer-display">40:00</div>
+      <div class="timer-spacer"></div>
+    </div>
+
+    <div class="dot-nav-wrap">
+      <div class="dot-nav" id="dot-nav"></div>
+    </div>
+
+    <div class="exam-question-area">
+      <div class="question-card">
+        <div class="q-number"       id="exam-q-number">Q1</div>
+        <div class="q-topic-label"  id="exam-q-topic"></div>
+        <div class="q-text"         id="exam-q-text"></div>
+      </div>
+      <div class="options-list" id="exam-options-list">
+        <button class="option-btn"><span class="opt-letter">A</span><span class="opt-text"></span></button>
+        <button class="option-btn"><span class="opt-letter">B</span><span class="opt-text"></span></button>
+        <button class="option-btn"><span class="opt-letter">C</span><span class="opt-text"></span></button>
+        <button class="option-btn"><span class="opt-letter">D</span><span class="opt-text"></span></button>
+      </div>
+    </div>
+
+    <div class="exam-footer">
+      <div class="exam-nav-row">
+        <button class="nav-btn" id="prev-btn" onclick="prevQuestion()">← Prev</button>
+        <button class="nav-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+      </div>
+      <button id="submit-btn" onclick="submitExam(false)">Submit Exam &nbsp;·&nbsp; 0 of 25 answered</button>
+    </div>
+
+  </div>
+
+  <!-- ══ RESULTS SCREEN ══ -->
+  <div id="results-screen">
+
+    <div class="topnav">
+      <a href="financial-markets-home.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </a>
+      <div class="nav-info">
+        <div class="page-title">Results</div>
+        <div class="page-sub">Mock Exam — Financial Markets</div>
+      </div>
+    </div>
+
+    <div class="results-body">
+      <div class="results-header-label">Exam Complete</div>
+
+      <div class="score-ring-wrap">
+        <div class="score-ring" id="score-ring">
+          <div class="score-ring-inner">
+            <div class="score-ring-num" id="score-ring-num">0</div>
+            <div class="score-ring-denom">/ 25</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="score-pct" id="score-pct">0%</div>
+      <div class="score-grade" id="score-grade">F</div>
+      <div class="time-taken-label" id="time-taken-label">Time taken: —</div>
+
+      <div class="answer-grid-label">Your Answers</div>
+      <div id="answer-grid"></div>
+
+      <button class="results-retry-btn" onclick="retryExam()">Try Again</button>
+      <button class="results-back-btn"  onclick="window.location.href='financial-markets-home.html'">Back to Subject</button>
+    </div>
+
+  </div>
+
+  <script>
+    var QUESTIONS = [
+      {
+        topic: 'Financial System',
+        text: 'Which of the following best describes a financial intermediary?',
+        options: [
+          'A government agency responsible for printing money',
+          'An institution that channels funds from savers to borrowers',
+          'A company that manufactures financial technology products',
+          'A regulatory body that oversees securities trading'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Financial Instruments',
+        text: 'The money market primarily deals in instruments with a maturity of:',
+        options: [
+          'Over 10 years',
+          'Between 1 and 5 years',
+          'Up to 1 year',
+          'Exactly 5 years'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Bond Markets',
+        text: 'A bond\'s current yield is best defined as:',
+        options: [
+          'Annual coupon payment divided by current market price',
+          'Face value divided by current market price',
+          'Coupon rate multiplied by face value',
+          'Yield to maturity plus the inflation rate'
+        ],
+        correct: 0
+      },
+      {
+        topic: 'Bond Markets',
+        text: 'A bond trading below its face value is said to be trading at a:',
+        options: [
+          'Premium',
+          'Discount',
+          'Par value',
+          'Parity rate'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Stock Markets',
+        text: 'The Price-to-Earnings (P/E) ratio measures:',
+        options: [
+          'A company\'s total debt relative to equity',
+          'How much investors pay per unit of earnings',
+          'The annual dividend yield of a stock',
+          'A stock\'s volatility relative to the market'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Stock Markets',
+        text: 'The Efficient Market Hypothesis (EMH) states that:',
+        options: [
+          'Markets are always overvalued due to speculation',
+          'Asset prices fully reflect all available information',
+          'Technical analysis consistently outperforms the market',
+          'Only institutional investors can achieve above-average returns'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Mutual Funds',
+        text: 'Which type of mutual fund attempts to replicate a market index?',
+        options: [
+          'Actively managed fund',
+          'Hedge fund',
+          'Index fund',
+          'Private equity fund'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Hedge Funds',
+        text: 'Long-short equity is a strategy most commonly associated with:',
+        options: [
+          'Mutual funds',
+          'Pension funds',
+          'Hedge funds',
+          'Central banks'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Options',
+        text: 'The Black-Scholes model is primarily used to price:',
+        options: [
+          'Bond futures contracts',
+          'Currency forward contracts',
+          'European stock options',
+          'Collateralised debt obligations'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Futures',
+        text: 'A long position in a futures contract means the investor has agreed to:',
+        options: [
+          'Sell the underlying asset at the agreed price',
+          'Write the futures contract for a premium',
+          'Buy the underlying asset at the agreed price',
+          'Hedge an existing short position'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Options',
+        text: 'The intrinsic value of a call option is best expressed as:',
+        options: [
+          'Strike price minus the current stock price',
+          'Max(Underlying price − Strike price, 0)',
+          'The option premium paid upfront',
+          'Strike price plus the time value'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Swaps',
+        text: 'Which type of swap involves the periodic exchange of principal and interest payments in two different currencies?',
+        options: [
+          'Interest rate swap',
+          'Credit default swap',
+          'Currency swap',
+          'Equity swap'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Derivatives',
+        text: 'In options pricing, "delta" measures:',
+        options: [
+          'The rate of change of option price with respect to volatility',
+          'The rate of change of option price with respect to the underlying price',
+          'The time decay of the option premium per day',
+          'The sensitivity of delta itself to underlying price changes'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Banking System',
+        text: 'A bank\'s Tier 1 capital primarily consists of:',
+        options: [
+          'Subordinated debt instruments',
+          'Common equity and retained earnings',
+          'Long-term senior bonds',
+          'Customer deposits and savings accounts'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Banking System',
+        text: 'The reserve requirement ratio determines:',
+        options: [
+          'The interest rate a bank charges on loans',
+          'The fraction of deposits banks must hold in reserve',
+          'The maximum loan a bank can issue to one borrower',
+          'The minimum capital adequacy ratio required by regulators'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Risk Management',
+        text: 'Systemic risk in financial markets refers to:',
+        options: [
+          'Risk specific to a single financial institution',
+          'Risk that can trigger a collapse of the entire financial system',
+          'Market risk from normal day-to-day price fluctuations',
+          'Liquidity risk inherent in individual bond issues'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Central Banking',
+        text: 'The "lender of last resort" function is performed by:',
+        options: [
+          'Commercial banks with the largest balance sheets',
+          'Investment banks and primary broker-dealers',
+          'The central bank',
+          'The International Monetary Fund (IMF)'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Monetary Policy',
+        text: 'Which monetary policy tool most directly influences short-term interbank interest rates?',
+        options: [
+          'Fiscal policy and government spending decisions',
+          'Reserve requirement ratio adjustments',
+          'The central bank\'s policy interest rate (repo rate)',
+          'Capital adequacy requirements for commercial banks'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Monetary Policy',
+        text: 'Quantitative easing (QE) involves a central bank:',
+        options: [
+          'Rapidly raising interest rates to reduce inflation',
+          'Purchasing large-scale financial assets to inject liquidity',
+          'Reducing the money supply through large-scale bond sales',
+          'Imposing capital controls on cross-border financial flows'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Financial Crises',
+        text: 'The 2008 Global Financial Crisis was primarily triggered by:',
+        options: [
+          'A collapse in global commodity markets',
+          'Excessive sovereign debt accumulation in European countries',
+          'Widespread failures in U.S. subprime mortgage markets and securitisation',
+          'A currency crisis originating in emerging-market economies'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Financial Instruments',
+        text: 'Securitisation involves:',
+        options: [
+          'Insuring bonds against the risk of default',
+          'Converting pools of illiquid assets into tradeable securities',
+          'Hedging foreign exchange exposure for exporting firms',
+          'Issuing new sovereign bonds on international capital markets'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Bond Markets',
+        text: 'An inverted yield curve — where long-term rates fall below short-term rates — typically signals:',
+        options: [
+          'Strong economic expansion and rising inflation',
+          'Low inflation expectations and stable growth',
+          'An expected economic slowdown or recession',
+          'Rising commodity prices and supply-side constraints'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Risk Management',
+        text: 'The Sharpe ratio measures:',
+        options: [
+          'The total return of an investment portfolio over a period',
+          'The volatility of an individual asset',
+          'Risk-adjusted return relative to a risk-free rate',
+          'The correlation between two different asset classes'
+        ],
+        correct: 2
+      },
+      {
+        topic: 'Banking System',
+        text: 'Moral hazard in banking most commonly refers to:',
+        options: [
+          'Banks charging excessively high interest rates to borrowers',
+          'Banks taking on excessive risk because they expect government bailouts',
+          'Banks maintaining higher-than-required capital reserves',
+          'Banks refusing to extend credit to higher-risk borrowers'
+        ],
+        correct: 1
+      },
+      {
+        topic: 'Financial Crises',
+        text: 'Financial contagion refers to:',
+        options: [
+          'Physical illness spreading among traders on exchange floors',
+          'The spread of financial distress from one institution or market to others',
+          'The transmission of monetary policy across different currency zones',
+          'Regulatory arbitrage between legal jurisdictions'
+        ],
+        correct: 1
+      }
+    ];
+
+    var TOTAL    = QUESTIONS.length;
+    var DURATION = 40 * 60;
+
+    var currentQ    = 0;
+    var userAnswers = new Array(TOTAL).fill(null);
+    var timerSecs   = DURATION;
+    var timerHandle = null;
+    var startTime   = null;
+
+    /* ── Start ── */
+    function startExam() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('exam-screen').style.display  = 'block';
+
+      currentQ    = 0;
+      userAnswers = new Array(TOTAL).fill(null);
+      timerSecs   = DURATION;
+      startTime   = Date.now();
+
+      buildDotNav();
+      renderExamQuestion(0);
+      timerHandle = setInterval(tickTimer, 1000);
+    }
+
+    /* ── Timer ── */
+    function tickTimer() {
+      timerSecs--;
+      updateTimerDisplay();
+      if (timerSecs <= 0) {
+        clearInterval(timerHandle);
+        submitExam(true);
+      }
+    }
+
+    function updateTimerDisplay() {
+      var m  = Math.floor(timerSecs / 60);
+      var s  = timerSecs % 60;
+      var el = document.getElementById('timer-display');
+      el.textContent = pad(m) + ':' + pad(s);
+      el.classList.toggle('warn',  timerSecs < 600 && timerSecs >= 300);
+      el.classList.toggle('alert', timerSecs < 300);
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    /* ── Dot nav ── */
+    function buildDotNav() {
+      var nav = document.getElementById('dot-nav');
+      nav.innerHTML = '';
+      for (var i = 0; i < TOTAL; i++) {
+        var dot = document.createElement('button');
+        dot.className   = 'q-dot';
+        dot.textContent = String(i + 1);
+        (function (capturedI) {
+          dot.onclick = function () { goToQuestion(capturedI); };
+        })(i);
+        nav.appendChild(dot);
+      }
+    }
+
+    function updateDots() {
+      var dots = document.querySelectorAll('.q-dot');
+      dots.forEach(function (dot, i) {
+        dot.className = 'q-dot';
+        if (userAnswers[i] !== null) dot.classList.add('answered');
+        if (i === currentQ)          dot.classList.add('active');
+      });
+      requestAnimationFrame(function () {
+        var activeDot = document.querySelector('.q-dot.active');
+        if (activeDot) {
+          activeDot.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      });
+    }
+
+    /* ── Question rendering ── */
+    function renderExamQuestion(i) {
+      var q = QUESTIONS[i];
+
+      document.getElementById('exam-q-number').textContent = 'Q' + (i + 1);
+      document.getElementById('exam-q-topic').textContent  = q.topic;
+      document.getElementById('exam-q-text').textContent   = q.text;
+
+      var btns    = document.querySelectorAll('#exam-options-list .option-btn');
+      var letters = ['A', 'B', 'C', 'D'];
+
+      btns.forEach(function (btn, idx) {
+        btn.className = 'option-btn';
+        btn.querySelector('.opt-letter').textContent = letters[idx];
+        btn.querySelector('.opt-text').textContent   = q.options[idx];
+
+        if (userAnswers[i] === idx) btn.classList.add('selected');
+
+        (function (capturedIdx) {
+          btn.onclick = function () { selectExamOption(capturedIdx); };
+        })(idx);
+      });
+
+      document.getElementById('prev-btn').disabled = (i === 0);
+      document.getElementById('next-btn').textContent = i === TOTAL - 1 ? 'Review' : 'Next →';
+
+      updateDots();
+      updateSubmitBtn();
+    }
+
+    function selectExamOption(idx) {
+      userAnswers[currentQ] = idx;
+
+      var btns = document.querySelectorAll('#exam-options-list .option-btn');
+      btns.forEach(function (btn, i) {
+        btn.classList.toggle('selected', i === idx);
+      });
+
+      updateDots();
+      updateSubmitBtn();
+    }
+
+    function updateSubmitBtn() {
+      var n = getAnsweredCount();
+      document.getElementById('submit-btn').textContent =
+        'Submit Exam  ·  ' + n + ' of ' + TOTAL + ' answered';
+    }
+
+    function getAnsweredCount() {
+      return userAnswers.filter(function (a) { return a !== null; }).length;
+    }
+
+    /* ── Navigation ── */
+    function goToQuestion(i) {
+      currentQ = i;
+      renderExamQuestion(i);
+      window.scrollTo(0, 0);
+    }
+
+    function prevQuestion() { if (currentQ > 0)          goToQuestion(currentQ - 1); }
+    function nextQuestion() { if (currentQ < TOTAL - 1)  goToQuestion(currentQ + 1); }
+
+    function confirmExit() {
+      if (confirm('Leave the exam? Your progress will be lost.')) {
+        clearInterval(timerHandle);
+        window.location.href = 'financial-markets-home.html';
+      }
+      return false;
+    }
+
+    /* ── Submit ── */
+    function submitExam(autoSubmit) {
+      var unanswered = TOTAL - getAnsweredCount();
+      if (!autoSubmit && unanswered > 0) {
+        var msg = unanswered === 1
+          ? 'You have 1 unanswered question. Submit anyway?'
+          : 'You have ' + unanswered + ' unanswered questions. Submit anyway?';
+        if (!confirm(msg)) return;
+      }
+      clearInterval(timerHandle);
+      var elapsed  = Math.round((Date.now() - startTime) / 1000);
+      var scoreVal = userAnswers.reduce(function (acc, ans, i) {
+        return acc + (ans === QUESTIONS[i].correct ? 1 : 0);
+      }, 0);
+      showResults(scoreVal, elapsed);
+    }
+
+    /* ── Results ── */
+    function showResults(scoreVal, elapsedSecs) {
+      document.getElementById('exam-screen').style.display    = 'none';
+      document.getElementById('results-screen').style.display = 'block';
+
+      var pct = Math.round(scoreVal / TOTAL * 100);
+      document.getElementById('score-ring-num').textContent = String(scoreVal);
+      document.getElementById('score-pct').textContent      = pct + '%';
+
+      var grade      = getGrade(pct);
+      var gradeColor = grade === 'A' ? '#7ab87a' :
+                       grade === 'B' ? '#2d7a84' :
+                       grade === 'C' ? '#8a9870' :
+                       grade === 'D' ? '#c09858' : '#c07878';
+
+      var gradeEl = document.getElementById('score-grade');
+      gradeEl.textContent        = grade;
+      gradeEl.style.background   = gradeColor;
+
+      var em = Math.floor(elapsedSecs / 60);
+      var es = elapsedSecs % 60;
+      document.getElementById('time-taken-label').textContent =
+        'Time taken: ' + pad(em) + ':' + pad(es);
+
+      buildAnswerGrid();
+
+      setTimeout(function () {
+        var deg   = Math.round(pct / 100 * 360);
+        document.getElementById('score-ring').style.background =
+          'conic-gradient(' + gradeColor + ' 0deg ' + deg + 'deg, #e0ddd7 ' + deg + 'deg 360deg)';
+      }, 120);
+
+      window.scrollTo(0, 0);
+    }
+
+    function buildAnswerGrid() {
+      var grid = document.getElementById('answer-grid');
+      grid.innerHTML = '';
+      userAnswers.forEach(function (ans, i) {
+        var dot = document.createElement('div');
+        dot.textContent = String(i + 1);
+        if (ans === null) {
+          dot.className = 'ans-dot skipped';
+        } else if (ans === QUESTIONS[i].correct) {
+          dot.className = 'ans-dot correct';
+        } else {
+          dot.className = 'ans-dot wrong';
+        }
+        grid.appendChild(dot);
+      });
+    }
+
+    function getGrade(pct) {
+      if (pct >= 90) return 'A';
+      if (pct >= 80) return 'B';
+      if (pct >= 70) return 'C';
+      if (pct >= 60) return 'D';
+      return 'F';
+    }
+
+    function retryExam() {
+      document.getElementById('results-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display   = 'block';
+      document.getElementById('score-ring').style.background  = 'conic-gradient(#e0ddd7 0deg 360deg)';
+    }
+
+    window.addEventListener('beforeunload', function () {
+      clearInterval(timerHandle);
+    });
+  </script>
+
+</body>
+</html>

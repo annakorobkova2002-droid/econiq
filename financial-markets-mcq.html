@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multiple Choice — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-decoration: none; flex-shrink: 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .back-btn:active { transform: scale(0.93); opacity: 0.8; }
+
+    .nav-info { flex: 1; min-width: 0; }
+    .page-title { font-size: 17px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em; }
+    .page-sub   { font-size: 12px; color: #999893; margin-top: 2px; }
+
+    #score-badge {
+      background: rgba(45,122,132,0.1);
+      border: 1px solid rgba(45,122,132,0.25);
+      border-radius: 20px;
+      padding: 6px 13px;
+      font-size: 13px; font-weight: 700;
+      color: #2d7a84; flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ── Progress ── */
+    .quiz-progress-wrap { padding: 18px 24px 0; }
+
+    .quiz-progress-label-row {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 8px;
+    }
+
+    #q-counter { font-size: 12px; font-weight: 600; color: #999893; }
+
+    #q-topic {
+      font-size: 10px; font-weight: 700; color: #2d7a84;
+      text-transform: uppercase; letter-spacing: 0.07em;
+    }
+
+    .quiz-prog-bar {
+      height: 6px;
+      background: rgba(45,122,132,0.14);
+      border-radius: 4px; overflow: hidden;
+    }
+
+    #quiz-prog-fill {
+      height: 100%; width: 0%;
+      background: #2d7a84;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── Question card ── */
+    .question-card {
+      margin: 16px 24px 0;
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 20px;
+      padding: 22px 20px 20px;
+    }
+
+    .q-number {
+      font-size: 11px; font-weight: 700;
+      color: #2d7a84;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .q-text {
+      font-size: 16px; font-weight: 600;
+      color: #1a1a1a; line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Options ── */
+    .options-list {
+      padding: 12px 24px 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: #ffffff;
+      border: 1.5px solid #e0ddd7;
+      border-radius: 16px;
+      font-size: 14px; font-weight: 500;
+      color: #2a2a2a; text-align: left;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.12s, background 0.18s, border-color 0.18s;
+      line-height: 1.45;
+    }
+
+    .option-btn:active { transform: scale(0.97); }
+
+    .opt-letter {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: #f2f1ed;
+      border: 1px solid #e0ddd7;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #999893;
+      flex-shrink: 0;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+
+    .opt-text { flex: 1; }
+
+    .option-btn.correct { background: rgba(122,184,122,0.12); border-color: #7ab87a; }
+    .option-btn.correct .opt-letter { background: #7ab87a; border-color: #7ab87a; color: #fff; }
+
+    .option-btn.wrong { background: rgba(192,120,120,0.1); border-color: #c07878; }
+    .option-btn.wrong .opt-letter { background: #c07878; border-color: #c07878; color: #fff; }
+
+    .option-btn.dimmed { opacity: 0.38; }
+
+    /* ── Feedback ── */
+    .feedback-card {
+      display: none;
+      margin: 14px 24px 0;
+      border-radius: 16px;
+      padding: 15px 17px;
+      gap: 12px; align-items: flex-start;
+    }
+
+    .feedback-card.correct { display: flex; background: rgba(122,184,122,0.12); border: 1px solid #7ab87a; }
+    .feedback-card.wrong   { display: flex; background: rgba(192,120,120,0.1);  border: 1px solid #c07878; }
+
+    .feedback-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .feedback-card.correct .feedback-icon { background: #7ab87a; color: #fff; }
+    .feedback-card.wrong   .feedback-icon { background: #c07878; color: #fff; }
+
+    .feedback-body { flex: 1; }
+
+    .feedback-label {
+      font-size: 13px; font-weight: 700; margin-bottom: 4px;
+    }
+
+    .feedback-card.correct .feedback-label { color: #2a5a2a; }
+    .feedback-card.wrong   .feedback-label { color: #5a2222; }
+
+    .feedback-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+    /* ── Next button ── */
+    #next-btn {
+      display: none;
+      margin: 14px 24px 0;
+      width: calc(100% - 48px);
+      padding: 16px;
+      background: #2d7a84; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    #next-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    /* ── Results screen ── */
+    #results-screen {
+      display: none;
+      padding: 40px 24px 60px;
+      text-align: center;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .results-header-label {
+      font-size: 11px; font-weight: 700;
+      color: #2d7a84;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 32px;
+    }
+
+    .score-ring-wrap {
+      width: 160px; height: 160px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .score-ring {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(#e0ddd7 0deg 360deg);
+    }
+
+    .score-ring-inner {
+      position: absolute;
+      inset: 14px;
+      background: #f2f1ed;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    .score-ring-num {
+      font-size: 40px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .score-ring-denom { font-size: 14px; color: #999893; font-weight: 600; margin-top: 3px; }
+
+    .score-pct {
+      font-size: 30px; font-weight: 800;
+      color: #2d7a84; letter-spacing: -0.04em;
+      margin-bottom: 6px;
+    }
+
+    .score-rating { font-size: 15px; font-weight: 600; color: #666; margin-bottom: 36px; }
+
+    .results-retry-btn {
+      width: 100%; padding: 15px;
+      background: #2d7a84; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-retry-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .results-back-btn {
+      width: 100%; padding: 14px;
+      background: #eae8e2; color: #555;
+      border: 1px solid #d8d5ce; border-radius: 16px;
+      font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-back-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .page-end { height: 48px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV (always visible) -->
+  <div class="topnav">
+    <a href="financial-markets-home.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div class="nav-info">
+      <div class="page-title">Multiple Choice</div>
+      <div class="page-sub">Financial Markets</div>
+    </div>
+    <div id="score-badge">0 / 15</div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label-row">
+        <span id="q-counter">Question 1 of 15</span>
+        <span id="q-topic"></span>
+      </div>
+      <div class="quiz-prog-bar">
+        <div id="quiz-prog-fill"></div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-number" id="q-number">Q1</div>
+      <div class="q-text"   id="q-text"></div>
+    </div>
+
+    <div class="options-list">
+      <button class="option-btn"><span class="opt-letter">A</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">B</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">C</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">D</span><span class="opt-text"></span></button>
+    </div>
+
+    <div id="feedback-card" class="feedback-card">
+      <div class="feedback-icon" id="feedback-icon"></div>
+      <div class="feedback-body">
+        <div class="feedback-label" id="feedback-label"></div>
+        <div class="feedback-text"  id="feedback-text"></div>
+      </div>
+    </div>
+
+    <button id="next-btn" onclick="nextQuestion()"></button>
+
+    <div class="page-end"></div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen">
+    <div class="results-header-label">Quiz Complete</div>
+    <div class="score-ring-wrap">
+      <div class="score-ring" id="score-ring">
+        <div class="score-ring-inner">
+          <div class="score-ring-num" id="score-ring-num">0</div>
+          <div class="score-ring-denom">/ 15</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-pct"    id="score-pct">0%</div>
+    <div class="score-rating" id="score-rating"></div>
+    <button class="results-retry-btn" onclick="retryQuiz()">Try Again</button>
+    <button class="results-back-btn"  onclick="window.location.href='financial-markets-home.html'">Back to Subject</button>
+    <div class="page-end"></div>
+  </div>
+
+  <script>
+    var QUESTIONS = [
+      {
+        topic: 'Financial System',
+        text: 'What is the primary function of financial markets?',
+        options: [
+          'To store household wealth safely',
+          'To channel savings into productive investments',
+          'To generate government revenue through taxes',
+          'To directly control inflation rates'
+        ],
+        correct: 1,
+        explanation: 'Financial markets allocate capital efficiently by connecting savers with borrowers and investors seeking funding for productive activities.'
+      },
+      {
+        topic: 'Financial Instruments',
+        text: 'Which of the following is a money market instrument?',
+        options: [
+          'Corporate bond with 10-year maturity',
+          'Treasury bill with 90-day maturity',
+          'Common stock listed on an exchange',
+          'Mortgage-backed security'
+        ],
+        correct: 1,
+        explanation: 'Treasury bills are short-term government securities with maturities up to one year — a defining characteristic of money market instruments.'
+      },
+      {
+        topic: 'Bond Markets',
+        text: 'If market interest rates rise, what happens to existing bond prices?',
+        options: [
+          'They rise proportionally with rates',
+          'They remain unchanged',
+          'They fall',
+          'They first rise, then fall'
+        ],
+        correct: 2,
+        explanation: 'Bond prices and interest rates move in opposite directions. Rising rates make existing fixed-rate bonds less attractive relative to new issues, pushing prices down.'
+      },
+      {
+        topic: 'Bond Markets',
+        text: 'Bond duration primarily measures a bond\'s:',
+        options: [
+          'Time remaining to maturity',
+          'Sensitivity to changes in interest rates',
+          'Probability of issuer default',
+          'Coupon payment frequency'
+        ],
+        correct: 1,
+        explanation: 'Duration quantifies how much a bond\'s price will change for a given change in interest rates — a higher duration means greater price sensitivity.'
+      },
+      {
+        topic: 'Options',
+        text: 'A call option gives its holder the right to:',
+        options: [
+          'Sell an asset at a specified price',
+          'Exchange two currencies at a forward rate',
+          'Buy an asset at a specified price',
+          'Borrow funds at a fixed interest rate'
+        ],
+        correct: 2,
+        explanation: 'A call option grants the right — but not the obligation — to purchase the underlying asset at the strike price before or at expiration.'
+      },
+      {
+        topic: 'Futures',
+        text: 'In a futures contract, the party who agrees to sell the underlying asset holds a:',
+        options: [
+          'Long position',
+          'Short position',
+          'Covered position',
+          'Delta-neutral position'
+        ],
+        correct: 1,
+        explanation: 'The short position in a futures contract means you have committed to delivering (selling) the underlying asset at the agreed price on the delivery date.'
+      },
+      {
+        topic: 'Swaps',
+        text: 'An interest rate swap most commonly involves:',
+        options: [
+          'Exchanging equity instruments for debt',
+          'Swapping fixed rate payments for floating rate payments',
+          'Trading currencies at a forward date',
+          'Selling bonds before maturity'
+        ],
+        correct: 1,
+        explanation: 'In a plain vanilla interest rate swap, one party pays a fixed rate while receiving floating rate payments, typically benchmarked to SOFR or a similar reference rate.'
+      },
+      {
+        topic: 'Risk Management',
+        text: 'Value at Risk (VaR) at the 95% confidence level means the portfolio loss will:',
+        options: [
+          'Always stay below this amount with certainty',
+          'Exceed this amount on only 5% of days',
+          'Equal the maximum possible loss',
+          'Be zero 95% of the time'
+        ],
+        correct: 1,
+        explanation: 'A 95% VaR tells you there is only a 5% probability that losses will exceed this amount over the specified time horizon under normal market conditions.'
+      },
+      {
+        topic: 'Banking System',
+        text: 'Fractional reserve banking primarily allows commercial banks to:',
+        options: [
+          'Print their own currency independently',
+          'Create money by lending out a portion of deposits',
+          'Set their own interest rates freely',
+          'Guarantee all customer deposits are risk-free'
+        ],
+        correct: 1,
+        explanation: 'By keeping only a fraction of deposits in reserve and lending the rest, banks effectively create new money and expand the money supply in the economy.'
+      },
+      {
+        topic: 'Banking System',
+        text: 'The Basel III framework was primarily introduced to:',
+        options: [
+          'Regulate stock market speculation',
+          'Strengthen bank capital adequacy and liquidity requirements',
+          'Control foreign exchange markets globally',
+          'Set interest rates across member countries'
+        ],
+        correct: 1,
+        explanation: 'Basel III was introduced after the 2008 crisis to strengthen capital ratios, introduce the Liquidity Coverage Ratio (LCR), and add macroprudential oversight of banks.'
+      },
+      {
+        topic: 'Credit Markets',
+        text: 'Credit ratings issued by agencies like Moody\'s or S&P primarily assess:',
+        options: [
+          'A borrower\'s historical stock performance',
+          'The probability of default on a debt obligation',
+          'A company\'s profitability and earnings growth',
+          'The overall liquidity of a country\'s markets'
+        ],
+        correct: 1,
+        explanation: 'Credit rating agencies evaluate borrowers\' creditworthiness and assign ratings that estimate the likelihood of default, helping investors assess risk and price debt.'
+      },
+      {
+        topic: 'Central Banking',
+        text: 'Open market operations by a central bank involve:',
+        options: [
+          'Setting lending rates for commercial banks directly',
+          'Regulating foreign exchange reserves',
+          'Buying or selling government securities in the open market',
+          'Controlling fiscal policy and government taxation'
+        ],
+        correct: 2,
+        explanation: 'When a central bank buys government securities it injects money into the banking system; selling them withdraws money — directly influencing short-term interest rates.'
+      },
+      {
+        topic: 'Monetary Policy',
+        text: 'Expansionary monetary policy is primarily designed to:',
+        options: [
+          'Decrease the money supply and raise interest rates',
+          'Increase the money supply and lower interest rates',
+          'Reduce the government budget deficit',
+          'Strengthen the domestic exchange rate'
+        ],
+        correct: 1,
+        explanation: 'Expansionary policy lowers interest rates and increases the money supply to stimulate borrowing, investment, and economic activity, especially during slowdowns.'
+      },
+      {
+        topic: 'Hedge Funds',
+        text: 'Hedge funds differ from mutual funds primarily because they:',
+        options: [
+          'Can only invest in government bonds',
+          'Are available to all retail investors with no minimum investment',
+          'Use leverage and complex strategies with fewer regulatory restrictions',
+          'Guarantee positive annual returns to investors'
+        ],
+        correct: 2,
+        explanation: 'Hedge funds are lightly regulated alternative investments for accredited investors that can freely use leverage, short selling, and derivatives to pursue absolute returns.'
+      },
+      {
+        topic: 'Credit Markets',
+        text: 'A credit default swap (CDS) functions most like:',
+        options: [
+          'A stock call option on an equity index',
+          'A forward foreign exchange contract',
+          'A currency swap between two counterparties',
+          'An insurance policy against a borrower\'s default'
+        ],
+        correct: 3,
+        explanation: 'The CDS buyer pays periodic premiums to the seller, who compensates the buyer if the reference entity defaults — effectively insuring against credit risk on a debt instrument.'
+      }
+    ];
+
+    var TOTAL     = QUESTIONS.length;
+    var currentQ  = 0;
+    var score     = 0;
+    var answered  = false;
+
+    function renderQuestion(i) {
+      answered = false;
+      var q = QUESTIONS[i];
+
+      document.getElementById('q-counter').textContent = 'Question ' + (i + 1) + ' of ' + TOTAL;
+      document.getElementById('q-topic').textContent   = q.topic;
+      document.getElementById('q-number').textContent  = 'Q' + (i + 1);
+      document.getElementById('q-text').textContent    = q.text;
+      document.getElementById('quiz-prog-fill').style.width = ((i / TOTAL) * 100) + '%';
+
+      var btns    = document.querySelectorAll('.option-btn');
+      var letters = ['A', 'B', 'C', 'D'];
+      btns.forEach(function (btn, idx) {
+        btn.className = 'option-btn';
+        btn.querySelector('.opt-letter').textContent = letters[idx];
+        btn.querySelector('.opt-text').textContent   = q.options[idx];
+        (function (capturedIdx) {
+          btn.onclick = function () { selectOption(capturedIdx); };
+        })(idx);
+      });
+
+      var fc = document.getElementById('feedback-card');
+      fc.className = 'feedback-card';
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedIdx) {
+      if (answered) return;
+      answered = true;
+
+      var q    = QUESTIONS[currentQ];
+      var btns = document.querySelectorAll('.option-btn');
+
+      btns.forEach(function (btn, i) {
+        btn.onclick = null;
+        if (i === q.correct) {
+          btn.classList.add('correct');
+        } else if (i === selectedIdx) {
+          btn.classList.add('wrong');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+
+      var isCorrect = (selectedIdx === q.correct);
+      if (isCorrect) {
+        score++;
+        document.getElementById('score-badge').textContent = score + ' / ' + TOTAL;
+      }
+
+      var fc = document.getElementById('feedback-card');
+      fc.className = 'feedback-card ' + (isCorrect ? 'correct' : 'wrong');
+
+      document.getElementById('feedback-label').textContent = isCorrect ? 'Correct!' : 'Incorrect';
+      document.getElementById('feedback-text').textContent  = q.explanation;
+
+      var checkSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var xSvg     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      document.getElementById('feedback-icon').innerHTML = isCorrect ? checkSvg : xSvg;
+
+      var nb = document.getElementById('next-btn');
+      nb.style.display = 'block';
+      nb.textContent   = currentQ < TOTAL - 1 ? 'Next Question →' : 'See Results →';
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= TOTAL) {
+        showResults();
+      } else {
+        renderQuestion(currentQ);
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-screen').style.display    = 'none';
+      document.getElementById('results-screen').style.display = 'block';
+      document.getElementById('quiz-prog-fill').style.width   = '100%';
+
+      var pct = Math.round((score / TOTAL) * 100);
+      document.getElementById('score-ring-num').textContent = String(score);
+      document.getElementById('score-pct').textContent      = pct + '%';
+      document.getElementById('score-rating').textContent   =
+        pct >= 87 ? 'Excellent work!' :
+        pct >= 67 ? 'Good job — keep going!' :
+                    'Keep studying — you\'ll get there!';
+
+      setTimeout(function () {
+        var deg   = Math.round(pct / 100 * 360);
+        var color = pct >= 87 ? '#7ab87a' : pct >= 67 ? '#2d7a84' : '#c07878';
+        document.getElementById('score-ring').style.background =
+          'conic-gradient(' + color + ' 0deg ' + deg + 'deg, #e0ddd7 ' + deg + 'deg 360deg)';
+      }, 120);
+
+      window.scrollTo(0, 0);
+    }
+
+    function retryQuiz() {
+      currentQ = 0;
+      score    = 0;
+      answered = false;
+      document.getElementById('results-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display    = 'block';
+      document.getElementById('score-badge').textContent      = '0 / ' + TOTAL;
+      document.getElementById('score-ring').style.background  = 'conic-gradient(#e0ddd7 0deg 360deg)';
+      renderQuestion(0);
+      window.scrollTo(0, 0);
+    }
+
+    renderQuestion(0);
+  </script>
+
+</body>
+</html>
