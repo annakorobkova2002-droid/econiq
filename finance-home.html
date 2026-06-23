@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance &amp; Accounting — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── Entrance animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .anim-0 { animation: fadeUp 0.38s ease both; }
+    .anim-1 { animation: fadeUp 0.38s ease 0.07s both; }
+    .anim-2 { animation: fadeUp 0.38s ease 0.13s both; }
+    .anim-3 { animation: fadeUp 0.38s ease 0.19s both; }
+    .anim-4 { animation: fadeUp 0.38s ease 0.25s both; }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .back-btn:active { transform: scale(0.93); opacity: 0.8; }
+
+    .nav-info { flex: 1; }
+
+    .page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 2px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      margin: 18px 24px 0;
+      background: #e2e6eb;
+      border: 1px solid #ccd2d9;
+      border-radius: 22px;
+      padding: 22px 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -28px;
+      right: -28px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(74, 106, 138, 0.07);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      right: 40px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(74, 106, 138, 0.05);
+      pointer-events: none;
+    }
+
+    .hero-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
+      background: #ccd2d9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #1a2530;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .hero-subtitle {
+      font-size: 12px;
+      color: #4a6a8a;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #4a6a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .progress-pct {
+      font-size: 12px;
+      font-weight: 700;
+      color: #4a6a8a;
+    }
+
+    .prog-bar-hero {
+      height: 7px;
+      background: rgba(74, 106, 138, 0.18);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .prog-fill-hero {
+      height: 100%;
+      width: 0%;
+      border-radius: 4px;
+      background: #4a6a8a;
+      transition: width 0.6s ease;
+    }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      padding: 14px 24px 0;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 16px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 26px;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #aaa89f;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+
+    /* ── Motivational banner ── */
+    .motivational {
+      margin: 14px 24px 0;
+      background: rgba(74, 106, 138, 0.1);
+      border: 1px solid rgba(74, 106, 138, 0.2);
+      border-radius: 16px;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .moti-emoji {
+      font-size: 24px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .moti-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e3045;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      padding: 24px 24px 12px;
+      font-size: 11px;
+      color: #aaa89f;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    /* ── Study Tools grid ── */
+    .tools-grid {
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 17px 15px 15px;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      position: relative;
+    }
+
+    .tool-card:active { transform: scale(0.96); opacity: 0.85; }
+
+    .tool-card.featured {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 17px 20px;
+      background: #e2e6eb;
+      border-color: #ccd2d9;
+    }
+
+    .tool-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #eef1f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 11px;
+      flex-shrink: 0;
+    }
+
+    .tool-card.featured .tool-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: #ccd2d9;
+      margin-bottom: 0;
+    }
+
+    .tool-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+      margin-bottom: 7px;
+      line-height: 1.3;
+    }
+
+    .tool-card.featured .tool-card-title {
+      font-size: 15px;
+    }
+
+    .tool-card.featured .tool-card-body { flex: 1; }
+
+    .soon-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      color: #aaa89f;
+      background: #eae8e2;
+      border-radius: 6px;
+      padding: 3px 8px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tool-card.featured .soon-badge {
+      background: rgba(74, 106, 138, 0.14);
+      color: #4a6a8a;
+    }
+
+    /* ── Chapters list ── */
+    .chapters {
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chapter-card {
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 18px;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .chapter-card:active { transform: scale(0.97); opacity: 0.85; }
+
+    .chapter-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #eef1f5;
+      border: 1px solid #ccd2d9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4a6a8a;
+      flex-shrink: 0;
+    }
+
+    .chapter-info { flex: 1; min-width: 0; }
+
+    .chapter-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2a2a2a;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chapter-sub {
+      font-size: 12px;
+      color: #999893;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chapter-arrow {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── Page end ── */
+    .page-end { height: 60px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="topnav anim-0">
+    <a href="index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div class="nav-info">
+      <div class="page-title">Finance &amp; Accounting</div>
+      <div class="page-sub">Financial Mathematics · 16 chapters</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero anim-1">
+    <div class="hero-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    </div>
+    <div class="hero-title">Finance &amp; Accounting</div>
+    <div class="hero-subtitle">16 chapters · 7 study tools · Full exam prep</div>
+    <div class="progress-label-row">
+      <span class="progress-label">Overall progress</span>
+      <span class="progress-pct">0% Completed</span>
+    </div>
+    <div class="prog-bar-hero">
+      <div class="prog-fill-hero"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row anim-2">
+    <div class="stat-card">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Questions<br>Solved</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Exercises<br>Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Mock Exams<br>Passed</div>
+    </div>
+  </div>
+
+  <!-- MOTIVATIONAL -->
+  <div class="motivational anim-2">
+    <div class="moti-emoji">📊</div>
+    <div class="moti-text">Master Financial Mathematics one formula at a time.</div>
+  </div>
+
+  <!-- STUDY TOOLS -->
+  <div class="section-label anim-3">Study Tools</div>
+
+  <div class="tools-grid anim-3">
+
+    <div class="tool-card" onclick="window.location.href='finance-mcq.html'">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Multiple Choice</div>
+      <div class="soon-badge" style="background:rgba(74,106,138,0.12);color:#4a6a8a;">15 Questions</div>
+    </div>
+
+    <div class="tool-card" onclick="alert('Practice Exercises — coming soon.')">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Practice Exercises</div>
+      <div class="soon-badge">Coming Soon</div>
+    </div>
+
+    <div class="tool-card" onclick="alert('Past Exams — coming soon.')">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Past Exams</div>
+      <div class="soon-badge">Coming Soon</div>
+    </div>
+
+    <div class="tool-card" onclick="alert('Formula Sheet — coming soon.')">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="5" x2="5" y2="19"/>
+          <circle cx="6.5" cy="6.5" r="2.5"/>
+          <circle cx="17.5" cy="17.5" r="2.5"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Formula Sheet</div>
+      <div class="soon-badge">Coming Soon</div>
+    </div>
+
+    <div class="tool-card" onclick="window.location.href='finance-mock-exam.html'">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Mock Exam</div>
+      <div class="soon-badge" style="background:rgba(74,106,138,0.12);color:#4a6a8a;">25 Q · 40 min</div>
+    </div>
+
+    <div class="tool-card" onclick="alert('Flashcards — coming soon.')">
+      <div class="tool-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="3"/>
+          <line x1="2" y1="10" x2="22" y2="10"/>
+          <line x1="8" y1="4" x2="8" y2="10"/>
+        </svg>
+      </div>
+      <div class="tool-card-title">Flashcards</div>
+      <div class="soon-badge">Coming Soon</div>
+    </div>
+
+    <!-- Exam Challenge Mode — featured full-width card -->
+    <div class="tool-card featured" onclick="alert('Exam Challenge Mode — coming soon.')">
+      <div class="tool-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a6a8a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <div class="tool-card-body">
+        <div class="tool-card-title">Exam Challenge Mode</div>
+        <div class="soon-badge">Coming Soon</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHAPTERS -->
+  <div class="section-label anim-4">Chapters</div>
+
+  <div class="chapters anim-4">
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=1&amp;title=Time+Value+of+Money'">
+      <div class="chapter-num">1</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Time Value of Money</div>
+        <div class="chapter-sub">Compounding, discounting, annuities</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=2&amp;title=Net+Present+Value'">
+      <div class="chapter-num">2</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Net Present Value</div>
+        <div class="chapter-sub">Project evaluation and decision rules</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=3&amp;title=Internal+Rate+of+Return'">
+      <div class="chapter-num">3</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Internal Rate of Return</div>
+        <div class="chapter-sub">Rate of return and project acceptance</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=4&amp;title=Capital+Budgeting'">
+      <div class="chapter-num">4</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Capital Budgeting</div>
+        <div class="chapter-sub">NPV, IRR, and payback comparison</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=5&amp;title=Cost+of+Capital+%28WACC%29'">
+      <div class="chapter-num">5</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Cost of Capital (WACC)</div>
+        <div class="chapter-sub">Debt, equity, and blended cost</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=6&amp;title=Capital+Structure'">
+      <div class="chapter-num">6</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Capital Structure</div>
+        <div class="chapter-sub">Optimal debt-equity trade-offs</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=7&amp;title=CAPM+%26+Market+Risk'">
+      <div class="chapter-num">7</div>
+      <div class="chapter-info">
+        <div class="chapter-title">CAPM &amp; Market Risk</div>
+        <div class="chapter-sub">Beta, risk premium, expected returns</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=8&amp;title=Portfolio+Theory'">
+      <div class="chapter-num">8</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Portfolio Theory</div>
+        <div class="chapter-sub">Diversification and the efficient frontier</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=9&amp;title=Financial+Statements'">
+      <div class="chapter-num">9</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Financial Statements</div>
+        <div class="chapter-sub">Balance sheet, income, cash flows</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=10&amp;title=Financial+Ratios'">
+      <div class="chapter-num">10</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Financial Ratios</div>
+        <div class="chapter-sub">Liquidity, leverage, and profitability</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=11&amp;title=Cash+Flow+Analysis'">
+      <div class="chapter-num">11</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Cash Flow Analysis</div>
+        <div class="chapter-sub">Free cash flow and working capital</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=12&amp;title=Working+Capital+Management'">
+      <div class="chapter-num">12</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Working Capital Management</div>
+        <div class="chapter-sub">Receivables, payables, inventory</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=13&amp;title=Dividend+Policy'">
+      <div class="chapter-num">13</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Dividend Policy</div>
+        <div class="chapter-sub">Payout policy and signalling theory</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=14&amp;title=Mergers+%26+Acquisitions'">
+      <div class="chapter-num">14</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Mergers &amp; Acquisitions</div>
+        <div class="chapter-sub">Synergies, valuation, deal structure</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=15&amp;title=International+Finance'">
+      <div class="chapter-num">15</div>
+      <div class="chapter-info">
+        <div class="chapter-title">International Finance</div>
+        <div class="chapter-sub">Exchange rates and FX hedging</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapter-card" onclick="window.location.href='finance-chapter.html?ch=16&amp;title=Financial+Planning'">
+      <div class="chapter-num">16</div>
+      <div class="chapter-info">
+        <div class="chapter-title">Financial Planning</div>
+        <div class="chapter-sub">Forecasting and scenario analysis</div>
+      </div>
+      <div class="chapter-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccd2d9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-end"></div>
+
+</body>
+</html>

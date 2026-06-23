@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multiple Choice — EconIQ</title>
+  <style>
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f1ed;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Top nav ── */
+    .topnav {
+      padding: 54px 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: #eae8e2;
+      border: 1px solid #d8d5ce;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-decoration: none; flex-shrink: 0;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .back-btn:active { transform: scale(0.93); opacity: 0.8; }
+
+    .nav-info { flex: 1; min-width: 0; }
+    .page-title { font-size: 17px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em; }
+    .page-sub   { font-size: 12px; color: #999893; margin-top: 2px; }
+
+    #score-badge {
+      background: rgba(74,106,138,0.1);
+      border: 1px solid rgba(74,106,138,0.25);
+      border-radius: 20px;
+      padding: 6px 13px;
+      font-size: 13px; font-weight: 700;
+      color: #4a6a8a; flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ── Progress ── */
+    .quiz-progress-wrap { padding: 18px 24px 0; }
+
+    .quiz-progress-label-row {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 8px;
+    }
+
+    #q-counter { font-size: 12px; font-weight: 600; color: #999893; }
+
+    #q-topic {
+      font-size: 10px; font-weight: 700; color: #4a6a8a;
+      text-transform: uppercase; letter-spacing: 0.07em;
+    }
+
+    .quiz-prog-bar {
+      height: 6px;
+      background: rgba(74,106,138,0.14);
+      border-radius: 4px; overflow: hidden;
+    }
+
+    #quiz-prog-fill {
+      height: 100%; width: 0%;
+      background: #4a6a8a;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── Question card ── */
+    .question-card {
+      margin: 16px 24px 0;
+      background: #ffffff;
+      border: 1px solid #e0ddd7;
+      border-radius: 20px;
+      padding: 22px 20px 20px;
+    }
+
+    .q-number {
+      font-size: 11px; font-weight: 700;
+      color: #4a6a8a;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .q-text {
+      font-size: 16px; font-weight: 600;
+      color: #1a1a1a; line-height: 1.55;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Options ── */
+    .options-list {
+      padding: 12px 24px 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: #ffffff;
+      border: 1.5px solid #e0ddd7;
+      border-radius: 16px;
+      font-size: 14px; font-weight: 500;
+      color: #2a2a2a; text-align: left;
+      cursor: pointer; font-family: inherit;
+      transition: transform 0.12s, background 0.18s, border-color 0.18s;
+      line-height: 1.45;
+    }
+
+    .option-btn:active { transform: scale(0.97); }
+
+    .opt-letter {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: #f2f1ed;
+      border: 1px solid #e0ddd7;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #999893;
+      flex-shrink: 0;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+
+    .opt-text { flex: 1; }
+
+    .option-btn.correct { background: rgba(122,184,122,0.12); border-color: #7ab87a; }
+    .option-btn.correct .opt-letter { background: #7ab87a; border-color: #7ab87a; color: #fff; }
+
+    .option-btn.wrong { background: rgba(192,120,120,0.1); border-color: #c07878; }
+    .option-btn.wrong .opt-letter { background: #c07878; border-color: #c07878; color: #fff; }
+
+    .option-btn.dimmed { opacity: 0.38; }
+
+    /* ── Feedback ── */
+    .feedback-card {
+      display: none;
+      margin: 14px 24px 0;
+      border-radius: 16px;
+      padding: 15px 17px;
+      gap: 12px; align-items: flex-start;
+    }
+
+    .feedback-card.correct { display: flex; background: rgba(122,184,122,0.12); border: 1px solid #7ab87a; }
+    .feedback-card.wrong   { display: flex; background: rgba(192,120,120,0.1);  border: 1px solid #c07878; }
+
+    .feedback-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .feedback-card.correct .feedback-icon { background: #7ab87a; color: #fff; }
+    .feedback-card.wrong   .feedback-icon { background: #c07878; color: #fff; }
+
+    .feedback-body { flex: 1; }
+
+    .feedback-label {
+      font-size: 13px; font-weight: 700; margin-bottom: 4px;
+    }
+
+    .feedback-card.correct .feedback-label { color: #2a5a2a; }
+    .feedback-card.wrong   .feedback-label { color: #5a2222; }
+
+    .feedback-text { font-size: 13px; color: #444; line-height: 1.6; }
+
+    /* ── Next button ── */
+    #next-btn {
+      display: none;
+      margin: 14px 24px 0;
+      width: calc(100% - 48px);
+      padding: 16px;
+      background: #4a6a8a; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    #next-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    /* ── Results screen ── */
+    #results-screen {
+      display: none;
+      padding: 40px 24px 60px;
+      text-align: center;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .results-header-label {
+      font-size: 11px; font-weight: 700;
+      color: #4a6a8a;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 32px;
+    }
+
+    .score-ring-wrap {
+      width: 160px; height: 160px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .score-ring {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: conic-gradient(#e0ddd7 0deg 360deg);
+    }
+
+    .score-ring-inner {
+      position: absolute;
+      inset: 14px;
+      background: #f2f1ed;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    .score-ring-num {
+      font-size: 40px; font-weight: 800;
+      color: #1a1a1a; letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .score-ring-denom { font-size: 14px; color: #999893; font-weight: 600; margin-top: 3px; }
+
+    .score-pct {
+      font-size: 30px; font-weight: 800;
+      color: #4a6a8a; letter-spacing: -0.04em;
+      margin-bottom: 6px;
+    }
+
+    .score-rating { font-size: 15px; font-weight: 600; color: #666; margin-bottom: 36px; }
+
+    .results-retry-btn {
+      width: 100%; padding: 15px;
+      background: #4a6a8a; color: #fff;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-retry-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .results-back-btn {
+      width: 100%; padding: 14px;
+      background: #eae8e2; color: #555;
+      border: 1px solid #d8d5ce; border-radius: 16px;
+      font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .results-back-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+    .page-end { height: 48px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV (always visible) -->
+  <div class="topnav">
+    <a href="finance-home.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+    <div class="nav-info">
+      <div class="page-title">Multiple Choice</div>
+      <div class="page-sub">Finance &amp; Accounting</div>
+    </div>
+    <div id="score-badge">0 / 15</div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label-row">
+        <span id="q-counter">Question 1 of 15</span>
+        <span id="q-topic"></span>
+      </div>
+      <div class="quiz-prog-bar">
+        <div id="quiz-prog-fill"></div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-number" id="q-number">Q1</div>
+      <div class="q-text"   id="q-text"></div>
+    </div>
+
+    <div class="options-list">
+      <button class="option-btn"><span class="opt-letter">A</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">B</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">C</span><span class="opt-text"></span></button>
+      <button class="option-btn"><span class="opt-letter">D</span><span class="opt-text"></span></button>
+    </div>
+
+    <div id="feedback-card" class="feedback-card">
+      <div class="feedback-icon" id="feedback-icon"></div>
+      <div class="feedback-body">
+        <div class="feedback-label" id="feedback-label"></div>
+        <div class="feedback-text"  id="feedback-text"></div>
+      </div>
+    </div>
+
+    <button id="next-btn" onclick="nextQuestion()"></button>
+
+    <div class="page-end"></div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen">
+    <div class="results-header-label">Quiz Complete</div>
+    <div class="score-ring-wrap">
+      <div class="score-ring" id="score-ring">
+        <div class="score-ring-inner">
+          <div class="score-ring-num" id="score-ring-num">0</div>
+          <div class="score-ring-denom">/ 15</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-pct"    id="score-pct">0%</div>
+    <div class="score-rating" id="score-rating"></div>
+    <button class="results-retry-btn" onclick="retryQuiz()">Try Again</button>
+    <button class="results-back-btn"  onclick="window.location.href='finance-home.html'">Back to Subject</button>
+    <div class="page-end"></div>
+  </div>
+
+  <script>
+    var QUESTIONS = [
+      {
+        topic: 'Time Value of Money',
+        text: 'You invest €1,000 at an annual interest rate of 8%, compounded annually. What is the approximate future value after 3 years?',
+        options: [
+          '€1,080',
+          '€1,240',
+          '€1,260',
+          '€1,300'
+        ],
+        correct: 2,
+        explanation: 'FV = 1000 × (1.08)³ = 1000 × 1.2597 ≈ €1,260. Compounding means interest is earned on previously earned interest, growing exponentially.'
+      },
+      {
+        topic: 'Capital Budgeting',
+        text: 'A project costs €500 today and returns €600 in one year. The discount rate is 10%. What is the project\'s Net Present Value (NPV)?',
+        options: [
+          '−€45',
+          '+€45',
+          '+€100',
+          '€0'
+        ],
+        correct: 1,
+        explanation: 'NPV = 600/1.10 − 500 = 545.45 − 500 = +€45.45. A positive NPV means the project creates value and should be accepted.'
+      },
+      {
+        topic: 'Capital Budgeting',
+        text: 'The Internal Rate of Return (IRR) is best defined as:',
+        options: [
+          'The rate of return required by equity investors',
+          'The discount rate at which a project\'s NPV equals zero',
+          'The weighted average of debt and equity costs',
+          'The ratio of net income to total equity'
+        ],
+        correct: 1,
+        explanation: 'The IRR is the discount rate that makes NPV = 0. A project is worthwhile if its IRR exceeds the required rate of return (cost of capital).'
+      },
+      {
+        topic: 'Cost of Capital',
+        text: 'The Weighted Average Cost of Capital (WACC) represents:',
+        options: [
+          'The return required by equity holders only',
+          'The risk-free rate plus the equity risk premium',
+          'The blended required return on all sources of financing, weighted by their proportions',
+          'The coupon rate on a company\'s outstanding bonds'
+        ],
+        correct: 2,
+        explanation: 'WACC weights the cost of equity and after-tax cost of debt by their respective proportions in the capital structure. It serves as the discount rate for evaluating investment projects.'
+      },
+      {
+        topic: 'Portfolio Theory',
+        text: 'According to the Capital Asset Pricing Model (CAPM), the expected return of a stock equals:',
+        options: [
+          'The market return multiplied by the stock\'s beta',
+          'The risk-free rate plus beta times the equity risk premium',
+          'The dividend yield plus the expected capital gain',
+          'The stock\'s historical average return over five years'
+        ],
+        correct: 1,
+        explanation: 'CAPM: E(r) = Rf + β × (Rm − Rf). Beta measures the stock\'s sensitivity to market movements, and the equity risk premium (Rm − Rf) is the excess return the market offers over the risk-free rate.'
+      },
+      {
+        topic: 'Portfolio Theory',
+        text: 'A stock has a beta of 1.5. If the market rises by 10%, you would expect the stock to rise by approximately:',
+        options: [
+          '10%',
+          '11.5%',
+          '15%',
+          '25%'
+        ],
+        correct: 2,
+        explanation: 'Beta measures systematic sensitivity: a beta of 1.5 means the stock moves 1.5× the market. A 10% market rise implies a 15% stock rise (in excess of the risk-free rate, simplified here).'
+      },
+      {
+        topic: 'Financial Statements',
+        text: 'The fundamental accounting equation states that:',
+        options: [
+          'Revenue − Expenses = Net Income',
+          'Assets = Liabilities + Shareholders\' Equity',
+          'Cash Flow = Net Income + Depreciation',
+          'Current Assets − Current Liabilities = Working Capital'
+        ],
+        correct: 1,
+        explanation: 'The balance sheet is governed by Assets = Liabilities + Equity. This equation must always balance — every transaction affects at least two items to maintain equilibrium.'
+      },
+      {
+        topic: 'Financial Analysis',
+        text: 'The current ratio is calculated as:',
+        options: [
+          'Total Assets divided by Total Liabilities',
+          'Current Assets divided by Current Liabilities',
+          'Net Income divided by Total Revenue',
+          'Cash divided by Total Debt'
+        ],
+        correct: 1,
+        explanation: 'Current ratio = Current Assets / Current Liabilities. It measures short-term liquidity — how well a company can cover its near-term obligations with its most liquid assets.'
+      },
+      {
+        topic: 'Capital Structure',
+        text: 'Modigliani and Miller\'s first proposition (without taxes) states that:',
+        options: [
+          'Firms should maximise debt to minimise cost of capital',
+          'A firm\'s total value is independent of its capital structure',
+          'Equity is always cheaper than debt for financing',
+          'Dividend payments increase firm value'
+        ],
+        correct: 1,
+        explanation: 'In a world without taxes, bankruptcy costs, or information asymmetry, MM Proposition I says the firm\'s value is determined solely by its assets and cash flows — not by how those assets are financed.'
+      },
+      {
+        topic: 'Equity Valuation',
+        text: 'The Gordon Growth Model (Dividend Discount Model) values a stock based on:',
+        options: [
+          'The book value of equity on the balance sheet',
+          'Discounted future dividends growing at a constant rate',
+          'The price-to-earnings multiple of comparable firms',
+          'Free cash flow discounted at the WACC'
+        ],
+        correct: 1,
+        explanation: 'Gordon Growth Model: P = D₁ / (r − g), where D₁ is next year\'s dividend, r is the required return, and g is the constant growth rate. It\'s suited to stable, dividend-paying companies.'
+      },
+      {
+        topic: 'Portfolio Theory',
+        text: 'Diversification across multiple assets primarily reduces:',
+        options: [
+          'Systematic (market) risk',
+          'Unsystematic (company-specific) risk',
+          'Inflation risk',
+          'Interest rate risk'
+        ],
+        correct: 1,
+        explanation: 'Unsystematic risk is firm-specific and can be diversified away by holding many uncorrelated assets. Systematic risk, which is correlated with the entire market, cannot be eliminated through diversification.'
+      },
+      {
+        topic: 'Financial Statements',
+        text: 'The primary purpose of the cash flow statement is to show:',
+        options: [
+          'The profitability of the company over the period',
+          'The assets and liabilities at a point in time',
+          'How cash was generated and used across operating, investing, and financing activities',
+          'The changes in retained earnings during the year'
+        ],
+        correct: 2,
+        explanation: 'The cash flow statement reconciles net income to actual cash movement, showing cash from operations, investing (capex, acquisitions), and financing (debt, equity issuance, dividends).'
+      },
+      {
+        topic: 'Working Capital',
+        text: 'Working capital is defined as:',
+        options: [
+          'Total assets minus total liabilities',
+          'Current assets minus current liabilities',
+          'Cash and equivalents divided by current liabilities',
+          'Net income plus depreciation and amortisation'
+        ],
+        correct: 1,
+        explanation: 'Working capital = Current Assets − Current Liabilities. It measures the buffer available to fund day-to-day operations. Positive working capital means the firm can meet short-term obligations.'
+      },
+      {
+        topic: 'Mergers & Acquisitions',
+        text: 'In the context of M&A, "synergy" refers to:',
+        options: [
+          'The premium paid above market price for an acquisition target',
+          'The combined entity creating more value than the two firms separately would',
+          'A legal agreement preventing the target from seeking other buyers',
+          'The reduction in headcount following a merger'
+        ],
+        correct: 1,
+        explanation: 'Synergy means the combined value exceeds the sum of the parts (2 + 2 = 5). It can arise from cost savings (economies of scale), revenue enhancements, or financial benefits such as tax shields.'
+      },
+      {
+        topic: 'Financial Analysis',
+        text: 'The debt-to-equity (D/E) ratio is used to measure:',
+        options: [
+          'A company\'s short-term liquidity position',
+          'How efficiently assets generate revenue',
+          'The degree of financial leverage in a company\'s capital structure',
+          'Profitability relative to total equity'
+        ],
+        correct: 2,
+        explanation: 'D/E = Total Debt / Total Equity. A high D/E signals greater financial leverage and risk — the firm relies heavily on borrowed money. Lenders and investors use it to assess solvency and credit risk.'
+      }
+    ];
+
+    var TOTAL     = QUESTIONS.length;
+    var currentQ  = 0;
+    var score     = 0;
+    var answered  = false;
+
+    function renderQuestion(i) {
+      answered = false;
+      var q = QUESTIONS[i];
+
+      document.getElementById('q-counter').textContent = 'Question ' + (i + 1) + ' of ' + TOTAL;
+      document.getElementById('q-topic').textContent   = q.topic;
+      document.getElementById('q-number').textContent  = 'Q' + (i + 1);
+      document.getElementById('q-text').textContent    = q.text;
+      document.getElementById('quiz-prog-fill').style.width = ((i / TOTAL) * 100) + '%';
+
+      var btns    = document.querySelectorAll('.option-btn');
+      var letters = ['A', 'B', 'C', 'D'];
+      btns.forEach(function (btn, idx) {
+        btn.className = 'option-btn';
+        btn.querySelector('.opt-letter').textContent = letters[idx];
+        btn.querySelector('.opt-text').textContent   = q.options[idx];
+        (function (capturedIdx) {
+          btn.onclick = function () { selectOption(capturedIdx); };
+        })(idx);
+      });
+
+      var fc = document.getElementById('feedback-card');
+      fc.className = 'feedback-card';
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedIdx) {
+      if (answered) return;
+      answered = true;
+
+      var q    = QUESTIONS[currentQ];
+      var btns = document.querySelectorAll('.option-btn');
+
+      btns.forEach(function (btn, i) {
+        btn.onclick = null;
+        if (i === q.correct) {
+          btn.classList.add('correct');
+        } else if (i === selectedIdx) {
+          btn.classList.add('wrong');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+
+      var isCorrect = (selectedIdx === q.correct);
+      if (isCorrect) {
+        score++;
+        document.getElementById('score-badge').textContent = score + ' / ' + TOTAL;
+      }
+
+      var fc = document.getElementById('feedback-card');
+      fc.className = 'feedback-card ' + (isCorrect ? 'correct' : 'wrong');
+
+      document.getElementById('feedback-label').textContent = isCorrect ? 'Correct!' : 'Incorrect';
+      document.getElementById('feedback-text').textContent  = q.explanation;
+
+      var checkSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var xSvg     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      document.getElementById('feedback-icon').innerHTML = isCorrect ? checkSvg : xSvg;
+
+      var nb = document.getElementById('next-btn');
+      nb.style.display = 'block';
+      nb.textContent   = currentQ < TOTAL - 1 ? 'Next Question →' : 'See Results →';
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ >= TOTAL) {
+        showResults();
+      } else {
+        renderQuestion(currentQ);
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-screen').style.display    = 'none';
+      document.getElementById('results-screen').style.display = 'block';
+      document.getElementById('quiz-prog-fill').style.width   = '100%';
+
+      var pct = Math.round((score / TOTAL) * 100);
+      document.getElementById('score-ring-num').textContent = String(score);
+      document.getElementById('score-pct').textContent      = pct + '%';
+      document.getElementById('score-rating').textContent   =
+        pct >= 87 ? 'Excellent work!' :
+        pct >= 67 ? 'Good job — keep going!' :
+                    'Keep studying — you\'ll get there!';
+
+      setTimeout(function () {
+        var deg   = Math.round(pct / 100 * 360);
+        var color = pct >= 87 ? '#7ab87a' : pct >= 67 ? '#4a6a8a' : '#c07878';
+        document.getElementById('score-ring').style.background =
+          'conic-gradient(' + color + ' 0deg ' + deg + 'deg, #e0ddd7 ' + deg + 'deg 360deg)';
+      }, 120);
+
+      window.scrollTo(0, 0);
+    }
+
+    function retryQuiz() {
+      currentQ = 0;
+      score    = 0;
+      answered = false;
+      document.getElementById('results-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display    = 'block';
+      document.getElementById('score-badge').textContent      = '0 / ' + TOTAL;
+      document.getElementById('score-ring').style.background  = 'conic-gradient(#e0ddd7 0deg 360deg)';
+      renderQuestion(0);
+      window.scrollTo(0, 0);
+    }
+
+    renderQuestion(0);
+  </script>
+
+</body>
+</html>
